@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>HME ITB - Dragon Radar</title>
+  <title>HMATB - Dragon Radar</title>
 
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
@@ -217,7 +217,6 @@
       <input id="final-code" type="text" placeholder="Masukkan kode final (4–6 huruf)" maxlength="6" inputmode="latin" />
       <button id="final-claim-btn">CLAIM</button>
     </div>
-    <div id="final-hint" style="margin-top:6px;font-size:0.8em;opacity:0.9;">Harus berada di radius lokasi PLN & 6 bola sudah terklaim.</div>
   </div>
 
   <div id="gps-status">GPS: —</div>
@@ -281,7 +280,10 @@
     // ===================== GEO TRACKING =====================
     function startLocationTracking() {
       if (watchId) return;
-      showToast('Selamat berpetualang!', 'success');
+      showToast('Selamat berpetualang!', 'warn');
+      document.getElementById('gps-status').style.display = 'block';
+
+      const options = { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 };
 
       watchId = navigator.geolocation.watchPosition(
         (position) => {
@@ -298,27 +300,16 @@
           } else {
             userMarker.setLatLng(userLatLng);
           }
-
-          // Simple GPS status
-          const gps = document.getElementById('gps-status');
-          gps.style.display = 'block';
-          gps.textContent = `GPS ±${Math.round(accuracy)}m`;
-          if (accuracy > 35) {
-            gps.style.borderColor = '#e5534b';
-          } else if (accuracy > 20) {
-            gps.style.borderColor = '#f6ad55';
-          } else {
-            gps.style.borderColor = '#3fb950';
-          }
-
+          
+          updateGpsStatus(accuracy);
           checkGeofence();
           validateClaimButtons();
         },
         (err) => {
-          alert('Error: Gagal mendapatkan lokasi.');
+          alert('Error: Gagal mendapatkan lokasi. Pastikan GPS aktif dan coba di tempat terbuka.');
           stopLocationTracking();
         },
-        { enableHighAccuracy: true, maximumAge: 1000 }
+        options
       );
 
       const btn = document.getElementById('start-stop-btn');
@@ -336,19 +327,28 @@
         document.getElementById('gps-status').style.display = 'none';
       }
     }
+    
+    function updateGpsStatus(accuracy) {
+        const statusEl = document.getElementById('gps-status');
+        statusEl.textContent = `GPS ± ${Math.round(accuracy)}m`;
+        if (accuracy > 50) {
+            statusEl.style.borderColor = '#e53e3e'; // Merah: Akurasi buruk
+        } else if (accuracy > 20) {
+            statusEl.style.borderColor = '#f6ad55'; // Kuning: Akurasi sedang
+        } else {
+            statusEl.style.borderColor = '#3fb950'; // Hijau: Akurasi bagus
+        }
+    }
 
     // ===================== LOGIKA GAME =====================
     function checkGeofence() {
       if (!userLatLng) return;
-      // Cari DB pertama yang belum terungkap
       const nextBallIndex = CONFIG.dragonBalls.findIndex((db, i) => !db.revealed && i < 6); // hanya 1-6 auto-reveal
       if (nextBallIndex !== -1) {
         const ball = CONFIG.dragonBalls[nextBallIndex];
         const dist = userLatLng.distanceTo(L.latLng(ball.pos.lat, ball.pos.lng));
         if (dist <= CONFIG.GEOFENCE_RADIUS_METERS) revealDragonBall(nextBallIndex);
       }
-      // Validasi enable tombol klaim aktif
-      validateClaimButtons();
     }
 
     function revealDragonBall(index) {
@@ -356,20 +356,21 @@
       if (ball.revealed) return;
       ball.revealed = true;
       saveState();
-
       createActiveMarker(index);
       updateUI();
     }
 
     // ===================== MARKER (RE-BUILD) =====================
     function rebuildMarkersFromState() {
-      // Bersihkan cache marker
       activeMarkers = {}; foundMarkers = {};
       CONFIG.dragonBalls.forEach((ball, index) => {
         if (ball.claimed) {
           createFoundMarker(index);
-        } else if (ball.revealed && index < 6) {
-          createActiveMarker(index);
+        } else if (ball.revealed) {
+          // Jangan reveal bola ke-7 secara otomatis saat load
+          if (index < 6 || (index === 6 && allFirstSixClaimed())) {
+            createActiveMarker(index);
+          }
         }
       });
     }
@@ -382,6 +383,8 @@
         className: 'db-marker', iconSize: [28, 28], iconAnchor: [14, 14]
       });
       const marker = L.marker(ballLatLng, { icon: dbIcon }).addTo(map);
+      
+      // Tombol klaim hanya untuk bola 1-6
       const popupContent = `
         <div class="popup-title">${ball.title} TERDETEKSI!</div>
         <small>Masuk radius ${CONFIG.GEOFENCE_RADIUS_METERS}m untuk klaim.</small>
@@ -407,16 +410,14 @@
 
     // ===================== KLAIM + VALIDASI =====================
     function handleClaim(index) {
-      if (isClaiming) return; // lock double-click
+      if (isClaiming) return;
       const ball = CONFIG.dragonBalls[index];
       if (ball.claimed) return;
 
-      // Validasi radius
       if (!userLatLng) { showToast('Aktifkan GPS dulu.', 'warn'); return; }
       const dist = userLatLng.distanceTo(L.latLng(ball.pos.lat, ball.pos.lng));
       if (dist > CONFIG.GEOFENCE_RADIUS_METERS) { showToast('❌ Terlalu jauh dari lokasi.', 'error'); return; }
 
-      // Input kode via prompt (untuk DB 1-6)
       const inputCode = prompt(`Masukkan kode validasi untuk ${ball.title} (4–6 huruf):`);
       if (!inputCode) return;
       if (inputCode.trim().toUpperCase() !== ball.code) {
@@ -425,12 +426,10 @@
       }
 
       isClaiming = true;
-      // Tandai klaim
       ball.claimed = true;
       ball.ts = Date.now();
       saveState();
 
-      // Bersihkan marker aktif & tampilkan marker found
       const marker = activeMarkers[index];
       if (marker) {
         marker.closePopup();
@@ -453,7 +452,8 @@
     // ===================== FINAL BOSS =====================
     function updateFinalBossUI() {
       const panel = document.getElementById('final-panel');
-      if (allFirstSixClaimed() && !CONFIG.dragonBalls[6].claimed) {
+      const finalBallRevealed = CONFIG.dragonBalls[6].revealed;
+      if (allFirstSixClaimed() && !CONFIG.dragonBalls[6].claimed && !finalBallRevealed) {
         panel.style.display = 'block';
       } else {
         panel.style.display = 'none';
@@ -462,7 +462,7 @@
 
     document.getElementById('final-claim-btn').addEventListener('click', () => {
       const code = (document.getElementById('final-code').value || '').trim().toUpperCase();
-      const finalIdx = 6; // index bola 7
+      const finalIdx = 6;
       const finalBall = CONFIG.dragonBalls[finalIdx];
 
       if (!allFirstSixClaimed()) { showToast('Kumpulkan 6 bola dulu!', 'warn'); return; }
@@ -471,29 +471,15 @@
       if (dist > CONFIG.GEOFENCE_RADIUS_METERS) { showToast('❌ Kamu belum di radius PLN.', 'error'); return; }
       if (code.length < 4 || code !== finalBall.code) { showToast('❌ Kode final salah.', 'error'); return; }
 
-      // Klaim final
-      finalBall.revealed = true; // ensure revealed
+      finalBall.revealed = true;
       finalBall.claimed = true; finalBall.ts = Date.now();
       saveState();
 
-      // tampilkan marker found jika belum ada
       if (!foundMarkers[finalIdx]) createFoundMarker(finalIdx);
       updateUI(); updateFinalBossUI();
       showToast('🎉 SEMUA DRAGON BALL TERKUMPUL! Shenron dipanggil!', 'success');
     });
-
-    // Shortcut panitia via console — bypass kode & geofence
-    window.claimFinalBall = function claimFinalBall() {
-      const i = 6;
-      CONFIG.dragonBalls[i].revealed = true;
-      CONFIG.dragonBalls[i].claimed = true;
-      CONFIG.dragonBalls[i].ts = Date.now();
-      saveState();
-      if (!foundMarkers[i]) createFoundMarker(i);
-      updateUI(); updateFinalBossUI();
-      showToast('⚡ Final Ball diklaim oleh panitia (override).', 'warn');
-    };
-
+    
     function allFirstSixClaimed() {
       return CONFIG.dragonBalls.slice(0, 6).every(db => db.claimed);
     }
@@ -506,7 +492,6 @@
     function loadState() {
       const saved = localStorage.getItem('dragonRadarState');
       if (saved) {
-        // merge aman: jaga field baru (ts) jika file lama sudah ada
         const savedBalls = JSON.parse(saved);
         CONFIG = JSON.parse(JSON.stringify(initialConfig));
         CONFIG.dragonBalls = initialConfig.dragonBalls.map((db, idx) => ({
@@ -522,7 +507,7 @@
       if (confirm('Apakah Anda yakin ingin menyerah dan mereset semua progres petualangan?')) {
         stopLocationTracking();
         localStorage.removeItem('dragonRadarState');
-        showToast('Loss, sayonara!');
+        showToast('Loss, sayonara!', 'error');
         setTimeout(() => location.reload(), 1600);
       }
     }
@@ -538,13 +523,11 @@
       });
     }
 
-    function showToast(message, type = 'info', durMs = 1600) {
+    function showToast(message, type = 'info', durMs = 3000) {
       const overlay = document.getElementById('notification-overlay');
       const msg = document.getElementById('notification-message');
-      overlay.classList.remove('toast-success', 'toast-error', 'toast-warn');
-      if (type === 'success') overlay.classList.add('toast-success');
-      if (type === 'error') overlay.classList.add('toast-error');
-      if (type === 'warn') overlay.classList.add('toast-warn');
+      overlay.className = ''; // Reset classes
+      if (type) overlay.classList.add(`toast-${type}`);
       msg.textContent = message;
       overlay.style.display = 'flex';
       clearTimeout(showToast._t);
@@ -590,3 +573,8 @@
   </script>
 </body>
 </html>
+<!--
+  Catatan:
+  - Pastikan untuk menguji aplikasi ini di lingkungan yang mendukung geolocation.
+  - Gunakan browser modern yang mendukung Leaflet dan Geolocation API.
+  - Aplikasi ini dirancang untuk digunakan dalam konteks permainan atau event tertentu.
