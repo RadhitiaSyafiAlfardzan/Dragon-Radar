@@ -96,10 +96,34 @@
       100%{opacity:0}
     }
 
+    /* ---------- Victory Screen (baru) ---------- */
+    #victory-screen{
+      position:fixed; inset:0; display:none;
+      z-index:2000;                           /* di atas semuanya */
+      background: radial-gradient(1200px 600px at 50% -10%, rgba(246,173,85,0.2), rgba(0,0,0,0.9)),
+                  rgba(0,0,0,0.92);
+      backdrop-filter: blur(2px);
+      align-items:center; justify-content:center; flex-direction:column;
+      text-align:center; color:var(--light);
+      padding:20px;
+    }
+    #victory-title{font-size:2rem; margin:0 0 10px 0; color:var(--accent); text-shadow:0 0 16px rgba(246,173,85,0.35)}
+    #victory-sub{font-size:1.1rem; margin:0 0 14px 0; opacity:0.95}
+    #victory-img{max-width:min(86vw,620px); max-height:min(60vh,520px); border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,0.55); border:1px solid rgba(255,255,255,0.08); margin-bottom:14px}
+    .victory-row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:center}
+    .victory-btn{
+      background:#21262d; color:#fff; border:1px solid var(--muted);
+      padding:10px 16px; border-radius:12px; cursor:pointer; font-family:'Orbitron',sans-serif;
+    }
+    .victory-btn:hover{ background:var(--accent); color:var(--bg); border-color:var(--accent) }
+    #sound-hint{ font-size:0.86rem; opacity:0.85; margin-top:8px }
+
     /* small responsive */
     @media (max-width:720px){
       #progress-panel{width:260px;right:8px;top:60px}
       #final-panel{min-width:280px}
+      #victory-title{font-size:1.6rem}
+      #victory-sub{font-size:1rem}
     }
   </style>
 </head>
@@ -154,9 +178,29 @@
   <div id="notification-overlay"><div id="notification-message"></div></div>
   <div id="center-info"><div class="card" id="center-info-card"></div></div>
 
+ <!-- ===== Victory Screen (baru) ===== -->
+<div id="victory-screen" role="dialog" aria-modal="true" aria-hidden="true">
+  <h2 id="victory-title">SELAMAT YE! 🎉</h2>
+  <p id="victory-sub">DEJAHIM TERCYNTAH!</p>
+  <img id="victory-img" src="meme dejahim.jpg" alt="Meme kemenangan: Dejahim Tercyntah" />
+  <!-- Audio disembunyikan, diputar via JS setelah klaim final -->
+  <audio id="victory-audio"
+         src="different-heaven-safe-and-sound-[ncs-release]-made-with-Voicemod.mp3"
+         preload="auto"
+         loop></audio>
+  <div class="victory-row" style="margin-top:6px">
+    <button id="victory-sound-btn" class="victory-btn">🔊 Putar Musik</button>
+    <button id="victory-restart-btn" class="victory-btn">🔄 Restart</button>
+    <button id="victory-close-btn" class="victory-btn">✖️ Tutup</button>
+  </div>
+  <div id="sound-hint">Jika musik belum terdengar, tekan <b>Putar Musik</b>.</div>
+</div>
+
+
   <script>
     /******************************************************************
      * Dragon Radar - Perbaikan klaim kapan saja (asalkan kode valid)
+     * + Victory screen (musik + meme) saat final boss berhasil
      ******************************************************************/
 
     // ---------------------- KONFIGURASI ----------------------
@@ -308,7 +352,7 @@
         list.appendChild(li);
         dbListItems.push(li);
       });
-      updateUI(); // refresh distances etc.
+      updateUI(); // refresh distances dll.
     }
 
     function updateUI(){
@@ -533,7 +577,7 @@
       try{ map.setView([ball.pos.lat, ball.pos.lng], 17, { animate:true }); }catch(e){}
 
       // pesan tengah 5 detik (instruksi vlog/foto)
-      showCenterInfo('Jangan lupa lanjutkan video vlog dan foto tiap pos dragon ball yak!', 5000);
+      showCenterInfo('Jangan lupa lanjutkan video vlog dan foto tiap pos dragon ball yak!', 8000);
 
       // toast sukses
       showToast('✅ Bola berhasil diklaim! Selamat!', 'success', 5000);
@@ -572,6 +616,9 @@
       updateUI(); updateFinalBossUI();
       showCenterInfo('🎉 SEMUA DRAGON BALL TERKUMPUL! Shenron dipanggil!', 4000);
       showToast('🎉 Final berhasil diklaim!', 'success', 4000);
+
+      // ===== TAMPILKAN VICTORY SCREEN + PUTAR MUSIK =====
+      showVictoryScreen();
     });
 
     // panitia shortcut di console
@@ -582,6 +629,9 @@
       if(!foundMarkers[i]) createFoundMarker(i);
       updateUI(); updateFinalBossUI();
       showToast('⚡ Final Ball diklaim oleh panitia (override).', 'warn', 3000);
+
+      // pastikan victory screen juga muncul via override
+      showVictoryScreen();
     };
 
     function allFirstSixClaimed(){
@@ -611,6 +661,49 @@
       showCenterInfo._t = setTimeout(()=>{ wrap.style.display = 'none'; }, dur);
     }
 
+    // ---------------------- Victory helpers (BARU) ----------------------
+    function showVictoryScreen(){
+      const scr = document.getElementById('victory-screen');
+      scr.style.display = 'flex';
+      scr.setAttribute('aria-hidden','false');
+
+      // Coba autoplay (akan sukses jika dipicu gesture tombol CLAIM)
+      tryPlayVictoryAudio();
+    }
+
+    function hideVictoryScreen(){
+      const scr = document.getElementById('victory-screen');
+      scr.style.display = 'none';
+      scr.setAttribute('aria-hidden','true');
+      stopVictoryAudio();
+    }
+
+    function tryPlayVictoryAudio(){
+      const audio = document.getElementById('victory-audio');
+      if(!audio) return;
+      audio.currentTime = 0;
+      const p = audio.play();
+      if(p && typeof p.catch === 'function'){
+        p.catch(()=> {
+          // Autoplay diblok — tampilkan hint
+          document.getElementById('sound-hint').style.opacity = '1';
+        });
+      }
+    }
+
+    function stopVictoryAudio(){
+      const audio = document.getElementById('victory-audio');
+      if(audio && !audio.paused){
+        try{ audio.pause(); }catch(e){}
+      }
+    }
+
+    function restartGame(){
+      stopVictoryAudio();
+      localStorage.removeItem('dragonRadarState');
+      location.reload();
+    }
+
     // ---------------------- Reset adventure ----------------------
     function resetAdventure(){
       if(!confirm('Apakah Anda yakin ingin menyerah dan mereset semua progres petualangan?')) return;
@@ -633,6 +726,11 @@
       document.getElementById('claim-open-btn').addEventListener('click', openClaimModal);
       document.getElementById('claim-close').addEventListener('click', closeClaimModal);
       document.getElementById('reset-btn').addEventListener('click', resetAdventure);
+
+      // Victory buttons
+      document.getElementById('victory-restart-btn').addEventListener('click', restartGame);
+      document.getElementById('victory-close-btn').addEventListener('click', hideVictoryScreen);
+      document.getElementById('victory-sound-btn').addEventListener('click', tryPlayVictoryAudio);
 
       // close modal on ESC
       window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeClaimModal(); });
