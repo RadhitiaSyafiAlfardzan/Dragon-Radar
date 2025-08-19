@@ -1,454 +1,592 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>HME ITB - Dragon Radar</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>HME ITB - Dragon Radar</title>
 
-    <!-- Memuat Leaflet.js -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha26-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
-    <!-- Memuat Font Orbitron untuk tema radar/sci-fi -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Font Orbitron -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
 
-    <style>
-        /* CSS Reset & Global Styles */
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            font-family: 'Orbitron', sans-serif;
-            background-color: #0d1117;
-            color: #c9d1d9;
-            overflow: hidden;
-        }
+  <style>
+    /* Global */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Orbitron', sans-serif;
+      background-color: #0d1117;
+      color: #c9d1d9;
+      overflow: hidden;
+    }
+    #map {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
 
-        /* Map Container */
-        #map {
-            height: 100%;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
+    /* Header */
+    .main-header {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      background-color: rgba(13, 17, 23, 0.8);
+      padding: 8px 20px;
+      border-radius: 30px;
+      border: 1px solid #f6ad55;
+      box-shadow: 0 0 15px rgba(246, 173, 85, 0.5);
+    }
+    .main-header h1 {
+      margin: 0;
+      font-size: 1.5em;
+      color: #f6ad55;
+      text-shadow: 0 0 5px #f6ad55;
+    }
 
-        /* Header Utama */
-        .main-header {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            background-color: rgba(13, 17, 23, 0.8);
-            padding: 8px 20px;
-            border-radius: 30px;
-            border: 1px solid #f6ad55;
-            box-shadow: 0 0 15px rgba(246, 173, 85, 0.5);
-        }
-        .main-header h1 {
-            margin: 0;
-            font-size: 1.5em;
-            color: #f6ad55;
-            text-shadow: 0 0 5px #f6ad55;
-        }
+    /* Panel progres */
+    #progress-panel {
+      position: absolute;
+      top: 70px;
+      right: 10px;
+      width: 300px;
+      background-color: rgba(13, 17, 23, 0.85);
+      border: 1px solid #8b949e;
+      border-radius: 8px;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+    #progress-panel h2 {
+      margin: 0;
+      padding: 10px;
+      font-size: 1em;
+      text-align: center;
+      border-bottom: 1px solid #8b949e;
+      color: #f0f6fc;
+    }
+    #db-list {
+      list-style: none;
+      padding: 10px;
+      margin: 0;
+      max-height: calc(100vh - 220px);
+      overflow-y: auto;
+    }
+    .db-item {
+      padding: 8px;
+      margin-bottom: 6px;
+      border-radius: 6px;
+      opacity: 0.6;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .db-item span.title { flex: 1 1 auto; }
+    .db-item span.time { font-size: 0.75em; opacity: 0.8; }
+    .db-item.active { opacity: 1; background-color: rgba(229, 62, 62, 0.25); font-weight: 700; }
+    .db-item.found { opacity: 1; background-color: rgba(63, 185, 80, 0.25); text-decoration: line-through; }
 
-        /* Panel Kontrol Progres */
-        #progress-panel {
-            position: absolute;
-            top: 70px;
-            right: 10px;
-            width: 280px;
-            background-color: rgba(13, 17, 23, 0.85);
-            border: 1px solid #8b949e;
-            border-radius: 8px;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
-        #progress-panel h2 {
-            margin: 0;
-            padding: 10px;
-            font-size: 1em;
-            text-align: center;
-            border-bottom: 1px solid #8b949e;
-            color: #f0f6fc;
-        }
-        #db-list {
-            list-style: none;
-            padding: 10px;
-            margin: 0;
-            max-height: calc(100vh - 200px);
-            overflow-y: auto;
-        }
-        .db-item {
-            padding: 8px;
-            margin-bottom: 5px;
-            border-radius: 4px;
-            opacity: 0.5;
-            transition: all 0.3s ease;
-        }
-        .db-item.active {
-            opacity: 1;
-            background-color: rgba(229, 62, 62, 0.3); /* Merah untuk target aktif */
-            font-weight: bold;
-        }
-        .db-item.found {
-            opacity: 1;
-            background-color: rgba(63, 185, 80, 0.3);
-            text-decoration: line-through;
-        }
+    /* Tombol bawah */
+    #bottom-controls {
+      position: absolute;
+      bottom: 20px;
+      left: 10px;
+      right: 10px;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .control-btn {
+      background-color: #21262d;
+      border: 1px solid #8b949e;
+      color: #f0f6fc;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1em;
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .control-btn:hover { background-color: #f6ad55; color: #0d1117; border-color: #f6ad55; }
+    .control-btn.stop { background-color: #e53e3e; }
 
-        /* Tombol Kontrol Bawah */
-        #bottom-controls {
-            position: absolute;
-            bottom: 20px;
-            left: 10px;
-            right: 10px;
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .control-btn {
-            background-color: #21262d;
-            border: 1px solid #8b949e;
-            color: #f0f6fc;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1em;
-            padding: 10px 20px;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .control-btn:hover {
-            background-color: #f6ad55;
-            color: #0d1117;
-            border-color: #f6ad55;
-        }
-        .control-btn.stop {
-            background-color: #e53e3e;
-        }
+    /* Popup leaflet */
+    .leaflet-popup-content-wrapper {
+      background-color: #161b22;
+      color: #c9d1d9;
+      border: 1px solid #f6ad55;
+    }
+    .leaflet-popup-tip { background-color: #161b22; }
+    .popup-title { color: #f6ad55; font-weight: bold; margin-bottom: 10px; }
+    .claim-button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background-color: #f6ad55;
+      color: #0d1117;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .claim-button:disabled { background-color: #555; color: #888; cursor: not-allowed; }
 
-        /* Kustomisasi Pop-up Leaflet */
-        .leaflet-popup-content-wrapper {
-            background-color: #161b22;
-            color: #c9d1d9;
-            border: 1px solid #f6ad55;
-        }
-        .leaflet-popup-tip { background-color: #161b22; }
-        .popup-title { color: #f6ad55; font-weight: bold; margin-bottom: 10px; }
-        .claim-button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            background-color: #f6ad55;
-            color: #0d1117;
-            border: none;
-            border-radius: 5px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .claim-button:disabled {
-            background-color: #555;
-            color: #888;
-            cursor: not-allowed;
-        }
+    /* Toast overlay */
+    #notification-overlay {
+      position: absolute; inset: 0; width: 100%; height: 100%; display: none;
+      justify-content: center; align-items: center; text-align: center; padding: 20px; box-sizing: border-box;
+      z-index: 9999; background-color: rgba(0,0,0,0.55);
+    }
+    #notification-message {
+      background-color: #21262d; padding: 20px 24px; border-radius: 10px; border: 1px solid #8b949e;
+      font-size: 1.05em; color: #f0f6fc; max-width: 86%;
+    }
+    .toast-success #notification-message { border-color: #3fb950; box-shadow: 0 0 16px rgba(63,185,80,0.35); }
+    .toast-error   #notification-message { border-color: #e5534b; box-shadow: 0 0 16px rgba(229,83,75,0.35); }
+    .toast-warn    #notification-message { border-color: #f6ad55; box-shadow: 0 0 16px rgba(246,173,85,0.35); }
 
-        /* Pesan Notifikasi 5 Detik */
-        #notification-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 9999;
-            display: none; /* Diubah oleh JS */
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        #notification-message {
-            background-color: #21262d;
-            padding: 30px;
-            border-radius: 10px;
-            border: 1px solid #f6ad55;
-            font-size: 1.2em;
-            color: #f0f6fc;
-            max-width: 80%;
-        }
-    </style>
+    /* Final Boss Panel */
+    #final-panel {
+      position: absolute;
+      left: 50%;
+      bottom: 90px;
+      transform: translateX(-50%);
+      z-index: 1001;
+      background: rgba(13,17,23,0.9);
+      border: 1px solid #f6ad55;
+      border-radius: 12px;
+      padding: 12px 14px;
+      min-width: 320px;
+      display: none; /* muncul otomatis setelah 6 bola klaim */
+      backdrop-filter: blur(6px);
+      box-shadow: 0 0 18px rgba(246, 173, 85, 0.35);
+    }
+    #final-panel h3 { margin: 0 0 8px 0; color: #f6ad55; font-size: 1.05em; text-align: center; }
+    #final-panel .final-row { display: flex; gap: 8px; }
+    #final-panel input {
+      flex: 1 1 auto; background: #0d1117; color: #f0f6fc; border: 1px solid #8b949e;
+      border-radius: 8px; padding: 10px 12px; font-family: inherit; font-size: 0.95em;
+    }
+    #final-panel button {
+      background: #f6ad55; color: #0d1117; border: none; border-radius: 10px; padding: 10px 14px;
+      font-family: 'Orbitron', sans-serif; font-weight: 700; cursor: pointer;
+    }
+    #gps-status {
+      position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%);
+      z-index: 1000; font-size: 0.85em; opacity: 0.9; background: rgba(22,27,34,0.8);
+      border: 1px solid #8b949e; border-radius: 10px; padding: 6px 10px; display: none;
+    }
+  </style>
 </head>
 <body>
-    <header class="main-header">
-        <h1>🐉 DRAGON RADAR</h1>
-    </header>
+  <header class="main-header">
+    <h1>🐉 DRAGON RADAR</h1>
+  </header>
 
-    <div id="map"></div>
+  <div id="map"></div>
 
-    <aside id="progress-panel">
-        <h2>STATUS PENCARIAN</h2>
-        <ul id="db-list">
-            <!-- Daftar Dragon Ball akan di-generate oleh JavaScript -->
-        </ul>
-    </aside>
+  <aside id="progress-panel">
+    <h2>STATUS PENCARIAN</h2>
+    <ul id="db-list"></ul>
+  </aside>
 
-    <div id="bottom-controls">
-        <button id="start-stop-btn" class="control-btn">🚀 Mulai</button>
-        <button id="recenter-btn" class="control-btn">📍 Pusatkan</button>
-        <button id="reset-btn" class="control-btn">🏳️ Menyerah!</button>
+  <div id="bottom-controls">
+    <button id="start-stop-btn" class="control-btn">🚀 Mulai</button>
+    <button id="recenter-btn" class="control-btn">📍 Pusatkan</button>
+    <button id="reset-btn" class="control-btn">🏳️ Menyerah!</button>
+  </div>
+
+  <!-- Final Boss Panel -->
+  <div id="final-panel">
+    <h3>⚔️ FINAL BOSS — PLN</h3>
+    <div class="final-row">
+      <input id="final-code" type="text" placeholder="Masukkan kode final (4–6 huruf)" maxlength="6" inputmode="latin" />
+      <button id="final-claim-btn">CLAIM</button>
     </div>
+    <div id="final-hint" style="margin-top:6px;font-size:0.8em;opacity:0.9;">Harus berada di radius lokasi PLN & 6 bola sudah terklaim.</div>
+  </div>
 
-    <div id="notification-overlay">
-        <div id="notification-message"></div>
-    </div>
+  <div id="gps-status">GPS: —</div>
 
-    <script>
-        // ==================================================================
-        // KONFIGURASI PERMAINAN (LOKASI ITB GANESHA)
-        // ==================================================================
-        const initialConfig = {
-            GEOFENCE_RADIUS_METERS: 15,
-            mapCenter: { lat: -6.8917, lng: 107.6106 },
-            dragonBalls: [
-                { pos: { lat: -6.891402, lng: 107.609867 }, title: "Dragon Ball 1", claimed: false, revealed: false },
-                { pos: { lat: -6.890317, lng: 107.611938 }, title: "Dragon Ball 2", claimed: false, revealed: false },
-                { pos: { lat: -6.889568, lng: 107.609993 }, title: "Dragon Ball 3", claimed: false, revealed: false },
-                { pos: { lat: -6.889638, lng: 107.608863 }, title: "Dragon Ball 4", claimed: false, revealed: false },
-                { pos: { lat: -6.888278, lng: 107.610829 }, title: "Dragon Ball 5", claimed: false, revealed: false },
-                { pos: { lat: -6.888294, lng: 107.610043 }, title: "Dragon Ball 6", claimed: false, revealed: false },
-                { pos: { lat: -6.889397, lng: 107.610726 }, title: "Dragon Ball 7", claimed: false, revealed: false }
-            ]
-        };
-        // ==================================================================
+  <!-- Toast -->
+  <div id="notification-overlay"><div id="notification-message"></div></div>
 
-        let CONFIG;
-        let map, userMarker, userLatLng, watchId = null;
-        let dbListItems = [], activeMarkers = {};
+  <script>
+    // ===================== KONFIGURASI AWAL =====================
+    const initialConfig = {
+      GEOFENCE_RADIUS_METERS: 15,
+      mapCenter: { lat: -6.8917, lng: 107.6106 },
+      dragonBalls: [
+        { pos: { lat: -6.891402262078686, lng: 107.60986788020188 }, title: 'Dragon Ball 1', code: 'KAMEH', claimed: false, revealed: false, ts: null },
+        { pos: { lat: -6.890317257283004, lng: 107.61193810855009 }, title: 'Dragon Ball 2', code: 'SENZU', claimed: false, revealed: false, ts: null },
+        { pos: { lat: -6.8895688198770255, lng: 107.60999326735156 }, title: 'Dragon Ball 3', code: 'NIMBU', claimed: false, revealed: false, ts: null },
+        { pos: { lat: -6.889638867816123, lng: 107.6088639094271 }, title: 'Dragon Ball 4', code: 'AETHER', claimed: false, revealed: false, ts: null },
+        { pos: { lat: -6.888278359981987, lng: 107.61082908926849 }, title: 'Dragon Ball 5', code: 'TURBO', claimed: false, revealed: false, ts: null },
+        { pos: { lat: -6.888294319040551, lng: 107.61004341921445 }, title: 'Dragon Ball 6', code: 'SPARK', claimed: false, revealed: false, ts: null },
+        { pos: { lat: -6.889397475056475, lng: 107.61072630941614 }, title: 'Dragon Ball 7 (FINAL)', code: 'ZENOS', claimed: false, revealed: false, ts: null }
+      ]
+    };
 
-        // --- FUNGSI UTAMA ---
-        function initApp() {
-            loadState();
-            initUI();
-            initMap();
-            setupEventListeners();
-        }
+    let CONFIG;
+    let map, userMarker, userLatLng, watchId = null;
+    let dbListItems = [], activeMarkers = {}, foundMarkers = {};
+    let isClaiming = false; // lock anti double-claim
 
-        function initUI() {
-            const dbList = document.getElementById('db-list');
-            dbList.innerHTML = ''; // Kosongkan dulu
-            dbListItems = [];
-            CONFIG.dragonBalls.forEach((db, index) => {
-                const li = document.createElement('li');
-                li.id = `db-item-${index}`;
-                li.className = 'db-item';
-                li.textContent = db.title;
-                dbList.appendChild(li);
-                dbListItems.push(li);
+    // ===================== INIT =====================
+    function initApp() {
+      loadState();
+      initUI();
+      initMap();
+      rebuildMarkersFromState();
+      setupEventListeners();
+      updateFinalBossUI();
+    }
+
+    function initUI() {
+      const dbList = document.getElementById('db-list');
+      dbList.innerHTML = '';
+      dbListItems = [];
+      CONFIG.dragonBalls.forEach((db, index) => {
+        const li = document.createElement('li');
+        li.id = `db-item-${index}`;
+        li.className = 'db-item';
+        li.innerHTML = `<span class="title">${db.title}</span><span class="time">${db.ts ? timeShort(db.ts) : ''}</span>`;
+        dbList.appendChild(li);
+        dbListItems.push(li);
+      });
+      updateUI();
+    }
+
+    function initMap() {
+      map = L.map('map', { zoomControl: false }).setView([CONFIG.mapCenter.lat, CONFIG.mapCenter.lng], 18);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 20
+      }).addTo(map);
+    }
+
+    // ===================== GEO TRACKING =====================
+    function startLocationTracking() {
+      if (watchId) return;
+      showToast('Selamat berpetualang!', 'success');
+
+      watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const { latitude, longitude, accuracy } = position.coords;
+          userLatLng = L.latLng(latitude, longitude);
+
+          if (!userMarker) {
+            const userIcon = L.divIcon({
+              html: '<div style="background-color:#4285F4;width:16px;height:16px;border-radius:50%;border:2px solid white;box-shadow:0 0 10px #4285F4"></div>',
+              className: 'user-marker', iconSize: [20, 20], iconAnchor: [10, 10]
             });
-            updateUI();
+            userMarker = L.marker(userLatLng, { icon: userIcon }).addTo(map);
+            map.setView(userLatLng, 18);
+          } else {
+            userMarker.setLatLng(userLatLng);
+          }
+
+          // Simple GPS status
+          const gps = document.getElementById('gps-status');
+          gps.style.display = 'block';
+          gps.textContent = `GPS ±${Math.round(accuracy)}m`;
+          if (accuracy > 35) {
+            gps.style.borderColor = '#e5534b';
+          } else if (accuracy > 20) {
+            gps.style.borderColor = '#f6ad55';
+          } else {
+            gps.style.borderColor = '#3fb950';
+          }
+
+          checkGeofence();
+          validateClaimButtons();
+        },
+        (err) => {
+          alert('Error: Gagal mendapatkan lokasi.');
+          stopLocationTracking();
+        },
+        { enableHighAccuracy: true, maximumAge: 1000 }
+      );
+
+      const btn = document.getElementById('start-stop-btn');
+      btn.textContent = '🛑 Hentikan';
+      btn.classList.add('stop');
+    }
+
+    function stopLocationTracking() {
+      if (watchId) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+        const btn = document.getElementById('start-stop-btn');
+        btn.textContent = '🚀 Mulai';
+        btn.classList.remove('stop');
+        document.getElementById('gps-status').style.display = 'none';
+      }
+    }
+
+    // ===================== LOGIKA GAME =====================
+    function checkGeofence() {
+      if (!userLatLng) return;
+      // Cari DB pertama yang belum terungkap
+      const nextBallIndex = CONFIG.dragonBalls.findIndex((db, i) => !db.revealed && i < 6); // hanya 1-6 auto-reveal
+      if (nextBallIndex !== -1) {
+        const ball = CONFIG.dragonBalls[nextBallIndex];
+        const dist = userLatLng.distanceTo(L.latLng(ball.pos.lat, ball.pos.lng));
+        if (dist <= CONFIG.GEOFENCE_RADIUS_METERS) revealDragonBall(nextBallIndex);
+      }
+      // Validasi enable tombol klaim aktif
+      validateClaimButtons();
+    }
+
+    function revealDragonBall(index) {
+      const ball = CONFIG.dragonBalls[index];
+      if (ball.revealed) return;
+      ball.revealed = true;
+      saveState();
+
+      createActiveMarker(index);
+      updateUI();
+    }
+
+    // ===================== MARKER (RE-BUILD) =====================
+    function rebuildMarkersFromState() {
+      // Bersihkan cache marker
+      activeMarkers = {}; foundMarkers = {};
+      CONFIG.dragonBalls.forEach((ball, index) => {
+        if (ball.claimed) {
+          createFoundMarker(index);
+        } else if (ball.revealed && index < 6) {
+          createActiveMarker(index);
         }
+      });
+    }
 
-        function initMap() {
-            map = L.map('map', { zoomControl: false }).setView([CONFIG.mapCenter.lat, CONFIG.mapCenter.lng], 18);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap &copy; CARTO',
-                maxZoom: 20
-            }).addTo(map);
+    function createActiveMarker(index) {
+      const ball = CONFIG.dragonBalls[index];
+      const ballLatLng = L.latLng(ball.pos.lat, ball.pos.lng);
+      const dbIcon = L.divIcon({
+        html: `<div style="background:#e53e3e;width:24px;height:24px;border-radius:50%;border:2px solid white;display:flex;justify-content:center;align-items:center;font-weight:bold;color:#fff;">${index + 1}</div>`,
+        className: 'db-marker', iconSize: [28, 28], iconAnchor: [14, 14]
+      });
+      const marker = L.marker(ballLatLng, { icon: dbIcon }).addTo(map);
+      const popupContent = `
+        <div class="popup-title">${ball.title} TERDETEKSI!</div>
+        <small>Masuk radius ${CONFIG.GEOFENCE_RADIUS_METERS}m untuk klaim.</small>
+        <button id="claim-btn-${index}" class="claim-button" disabled>Klaim Bola</button>
+      `;
+      marker.bindPopup(popupContent, { closeOnClick: false, autoClose: false }).openPopup();
+      marker.getPopup().on('add', () => {
+        const btn = document.getElementById(`claim-btn-${index}`);
+        if (btn) btn.addEventListener('click', () => handleClaim(index));
+      });
+      activeMarkers[index] = marker;
+    }
+
+    function createFoundMarker(index) {
+      const ball = CONFIG.dragonBalls[index];
+      const foundIcon = L.divIcon({
+        html: '<div style="background:#3fb950;width:20px;height:20px;border-radius:50%;border:1px solid black;"></div>',
+        className: 'found-marker', iconSize: [22, 22], iconAnchor: [11, 11]
+      });
+      const marker = L.marker([ball.pos.lat, ball.pos.lng], { icon: foundIcon }).addTo(map);
+      foundMarkers[index] = marker;
+    }
+
+    // ===================== KLAIM + VALIDASI =====================
+    function handleClaim(index) {
+      if (isClaiming) return; // lock double-click
+      const ball = CONFIG.dragonBalls[index];
+      if (ball.claimed) return;
+
+      // Validasi radius
+      if (!userLatLng) { showToast('Aktifkan GPS dulu.', 'warn'); return; }
+      const dist = userLatLng.distanceTo(L.latLng(ball.pos.lat, ball.pos.lng));
+      if (dist > CONFIG.GEOFENCE_RADIUS_METERS) { showToast('❌ Terlalu jauh dari lokasi.', 'error'); return; }
+
+      // Input kode via prompt (untuk DB 1-6)
+      const inputCode = prompt(`Masukkan kode validasi untuk ${ball.title} (4–6 huruf):`);
+      if (!inputCode) return;
+      if (inputCode.trim().toUpperCase() !== ball.code) {
+        showToast('❌ Kode salah! Tanya panitia lagi.', 'error');
+        return;
+      }
+
+      isClaiming = true;
+      // Tandai klaim
+      ball.claimed = true;
+      ball.ts = Date.now();
+      saveState();
+
+      // Bersihkan marker aktif & tampilkan marker found
+      const marker = activeMarkers[index];
+      if (marker) {
+        marker.closePopup();
+        map.removeLayer(marker);
+        delete activeMarkers[index];
+      }
+      createFoundMarker(index);
+
+      updateUI();
+      isClaiming = false;
+
+      if (allFirstSixClaimed() && !CONFIG.dragonBalls[6].claimed) {
+        showToast('⚔️ 6 bola terkumpul! Menuju Final Boss di PLN!', 'success');
+        updateFinalBossUI();
+      } else {
+        showToast('✅ Bola berhasil diklaim! Gas ke titik berikutnya!', 'success');
+      }
+    }
+
+    // ===================== FINAL BOSS =====================
+    function updateFinalBossUI() {
+      const panel = document.getElementById('final-panel');
+      if (allFirstSixClaimed() && !CONFIG.dragonBalls[6].claimed) {
+        panel.style.display = 'block';
+      } else {
+        panel.style.display = 'none';
+      }
+    }
+
+    document.getElementById('final-claim-btn').addEventListener('click', () => {
+      const code = (document.getElementById('final-code').value || '').trim().toUpperCase();
+      const finalIdx = 6; // index bola 7
+      const finalBall = CONFIG.dragonBalls[finalIdx];
+
+      if (!allFirstSixClaimed()) { showToast('Kumpulkan 6 bola dulu!', 'warn'); return; }
+      if (!userLatLng) { showToast('Aktifkan GPS dulu.', 'warn'); return; }
+      const dist = userLatLng.distanceTo(L.latLng(finalBall.pos.lat, finalBall.pos.lng));
+      if (dist > CONFIG.GEOFENCE_RADIUS_METERS) { showToast('❌ Kamu belum di radius PLN.', 'error'); return; }
+      if (code.length < 4 || code !== finalBall.code) { showToast('❌ Kode final salah.', 'error'); return; }
+
+      // Klaim final
+      finalBall.revealed = true; // ensure revealed
+      finalBall.claimed = true; finalBall.ts = Date.now();
+      saveState();
+
+      // tampilkan marker found jika belum ada
+      if (!foundMarkers[finalIdx]) createFoundMarker(finalIdx);
+      updateUI(); updateFinalBossUI();
+      showToast('🎉 SEMUA DRAGON BALL TERKUMPUL! Shenron dipanggil!', 'success');
+    });
+
+    // Shortcut panitia via console — bypass kode & geofence
+    window.claimFinalBall = function claimFinalBall() {
+      const i = 6;
+      CONFIG.dragonBalls[i].revealed = true;
+      CONFIG.dragonBalls[i].claimed = true;
+      CONFIG.dragonBalls[i].ts = Date.now();
+      saveState();
+      if (!foundMarkers[i]) createFoundMarker(i);
+      updateUI(); updateFinalBossUI();
+      showToast('⚡ Final Ball diklaim oleh panitia (override).', 'warn');
+    };
+
+    function allFirstSixClaimed() {
+      return CONFIG.dragonBalls.slice(0, 6).every(db => db.claimed);
+    }
+
+    // ===================== STATE & UI =====================
+    function saveState() {
+      localStorage.setItem('dragonRadarState', JSON.stringify(CONFIG.dragonBalls));
+    }
+
+    function loadState() {
+      const saved = localStorage.getItem('dragonRadarState');
+      if (saved) {
+        // merge aman: jaga field baru (ts) jika file lama sudah ada
+        const savedBalls = JSON.parse(saved);
+        CONFIG = JSON.parse(JSON.stringify(initialConfig));
+        CONFIG.dragonBalls = initialConfig.dragonBalls.map((db, idx) => ({
+          ...db,
+          ...(savedBalls[idx] || {})
+        }));
+      } else {
+        CONFIG = JSON.parse(JSON.stringify(initialConfig));
+      }
+    }
+
+    function resetAdventure() {
+      if (confirm('Apakah Anda yakin ingin menyerah dan mereset semua progres petualangan?')) {
+        stopLocationTracking();
+        localStorage.removeItem('dragonRadarState');
+        showToast('Loss, sayonara!');
+        setTimeout(() => location.reload(), 1600);
+      }
+    }
+
+    function updateUI() {
+      dbListItems.forEach((item, index) => {
+        const db = CONFIG.dragonBalls[index];
+        item.className = 'db-item';
+        if (db.claimed) item.classList.add('found');
+        else if (db.revealed) item.classList.add('active');
+        const timeSpan = item.querySelector('span.time');
+        if (timeSpan) timeSpan.textContent = db.ts ? timeShort(db.ts) : '';
+      });
+    }
+
+    function showToast(message, type = 'info', durMs = 1600) {
+      const overlay = document.getElementById('notification-overlay');
+      const msg = document.getElementById('notification-message');
+      overlay.classList.remove('toast-success', 'toast-error', 'toast-warn');
+      if (type === 'success') overlay.classList.add('toast-success');
+      if (type === 'error') overlay.classList.add('toast-error');
+      if (type === 'warn') overlay.classList.add('toast-warn');
+      msg.textContent = message;
+      overlay.style.display = 'flex';
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => { overlay.style.display = 'none'; }, durMs);
+    }
+
+    function validateClaimButtons() {
+      if (!userLatLng) return;
+      Object.keys(activeMarkers).forEach((k) => {
+        const index = Number(k);
+        const ball = CONFIG.dragonBalls[index];
+        if (!ball.claimed) {
+          const dist = userLatLng.distanceTo(L.latLng(ball.pos.lat, ball.pos.lng));
+          const claimBtn = document.getElementById(`claim-btn-${index}`);
+          if (claimBtn) claimBtn.disabled = dist > CONFIG.GEOFENCE_RADIUS_METERS;
         }
+      });
+    }
 
-        // --- LOGIKA PELACAKAN & GEOLOKASI ---
-        function startLocationTracking() {
-            if (watchId) return; // Mencegah duplikasi
-            
-            showNotification("selamat berpetualang!");
+    function timeShort(ts) {
+      try {
+        const d = new Date(ts);
+        const hh = String(d.getHours()).padStart(2, '0');
+        const mm = String(d.getMinutes()).padStart(2, '0');
+        return `${hh}:${mm}`;
+      } catch { return ''; }
+    }
 
-            watchId = navigator.geolocation.watchPosition(
-                (position) => {
-                    userLatLng = L.latLng(position.coords.latitude, position.coords.longitude);
-                    if (!userMarker) {
-                        const userIcon = L.divIcon({
-                            html: '<div style="background-color: #4285F4; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px #4285F4;"></div>',
-                            className: 'user-marker', iconSize: [20, 20], iconAnchor: [10, 10]
-                        });
-                        userMarker = L.marker(userLatLng, { icon: userIcon }).addTo(map);
-                        map.setView(userLatLng, 18); // Pusatkan peta saat lokasi pertama kali ditemukan
-                    } else {
-                        userMarker.setLatLng(userLatLng);
-                    }
-                    checkGeofence();
-                    validateClaimButtons();
-                },
-                () => { alert("Error: Gagal mendapatkan lokasi."); stopLocationTracking(); },
-                { enableHighAccuracy: true }
-            );
-            const btn = document.getElementById('start-stop-btn');
-            btn.textContent = '🛑 Hentikan';
-            btn.classList.add('stop');
-        }
+    function setupEventListeners() {
+      document.getElementById('start-stop-btn').addEventListener('click', () => {
+        if (watchId) stopLocationTracking(); else startLocationTracking();
+      });
+      document.getElementById('recenter-btn').addEventListener('click', () => {
+        if (userMarker) map.setView(userMarker.getLatLng(), 18);
+        else alert("Lokasi belum ditemukan. Klik 'Mulai' untuk memulai pelacakan.");
+      });
+      document.getElementById('reset-btn').addEventListener('click', resetAdventure);
+    }
 
-        function stopLocationTracking() {
-            if (watchId) {
-                navigator.geolocation.clearWatch(watchId);
-                watchId = null;
-                const btn = document.getElementById('start-stop-btn');
-                btn.textContent = '🚀 Mulai';
-                btn.classList.remove('stop');
-            }
-        }
-
-        // --- LOGIKA PERMAINAN OTOMATIS ---
-        function checkGeofence() {
-            if (!userLatLng) return;
-            const nextBallIndex = CONFIG.dragonBalls.findIndex(db => !db.revealed);
-            if (nextBallIndex === -1) return;
-
-            const ball = CONFIG.dragonBalls[nextBallIndex];
-            const ballLatLng = L.latLng(ball.pos.lat, ball.pos.lng);
-            const distance = userLatLng.distanceTo(ballLatLng);
-
-            console.log(`Jarak ke Dragon Ball #${nextBallIndex + 1} (tersembunyi): ${distance.toFixed(2)} meter`);
-
-            if (distance <= CONFIG.GEOFENCE_RADIUS_METERS) {
-                revealDragonBall(nextBallIndex);
-            }
-        }
-
-        function revealDragonBall(index) {
-            const ball = CONFIG.dragonBalls[index];
-            if (ball.revealed) return;
-            ball.revealed = true;
-            saveState();
-
-            const ballLatLng = L.latLng(ball.pos.lat, ball.pos.lng);
-            const dbIcon = L.divIcon({
-                html: `<div style="background-color: #e53e3e; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display:flex; justify-content:center; align-items:center; font-weight:bold; color:white;">${index + 1}</div>`,
-                className: 'db-marker', iconSize: [28, 28], iconAnchor: [14, 14]
-            });
-
-            const marker = L.marker(ballLatLng, { icon: dbIcon }).addTo(map);
-            const popupContent = `<div class="popup-title">${ball.title} TERDETEKSI!</div><button id="claim-btn-${index}" class="claim-button" disabled>Bola Diterima</button>`;
-            marker.bindPopup(popupContent, { closeOnClick: false, autoClose: false }).openPopup();
-            
-            marker.getPopup().on('add', () => {
-                document.getElementById(`claim-btn-${index}`).addEventListener('click', () => handleClaim(index));
-            });
-
-            activeMarkers[index] = marker;
-            updateUI();
-        }
-
-        // --- LOGIKA KLAIM & VALIDASI ---
-        function validateClaimButtons() {
-            if (!userLatLng) return;
-            for (const index in activeMarkers) {
-                const ball = CONFIG.dragonBalls[index];
-                if (!ball.claimed) {
-                    const ballLatLng = L.latLng(ball.pos.lat, ball.pos.lng);
-                    const distance = userLatLng.distanceTo(ballLatLng);
-                    const claimButton = document.getElementById(`claim-btn-${index}`);
-                    if (claimButton) {
-                        claimButton.disabled = distance > CONFIG.GEOFENCE_RADIUS_METERS;
-                    }
-                }
-            }
-        }
-
-        function handleClaim(index) {
-            const ball = CONFIG.dragonBalls[index];
-            ball.claimed = true;
-            saveState();
-            
-            const marker = activeMarkers[index];
-            marker.closePopup();
-            map.removeLayer(marker);
-            delete activeMarkers[index];
-            
-            const foundIcon = L.divIcon({
-                html: `<div style="background-color: #3fb950; width: 20px; height: 20px; border-radius: 50%; border: 1px solid black;"></div>`,
-                className: 'found-marker', iconSize: [22, 22], iconAnchor: [11, 11]
-            });
-            L.marker([ball.pos.lat, ball.pos.lng], { icon: foundIcon }).addTo(map);
-
-            updateUI();
-            showNotification("Janlup foto bersama setiap penemuan dragon ball dan video vlog selama petualangan berlangsung untuk sebagai bukti kelayakan kalian!");
-        }
-
-        // --- MANAJEMEN STATE & UI ---
-        function saveState() {
-            localStorage.setItem('dragonRadarState', JSON.stringify(CONFIG.dragonBalls));
-        }
-
-        function loadState() {
-            const savedState = localStorage.getItem('dragonRadarState');
-            if (savedState) {
-                CONFIG = { ...initialConfig, dragonBalls: JSON.parse(savedState) };
-            } else {
-                CONFIG = JSON.parse(JSON.stringify(initialConfig)); // Deep copy
-            }
-        }
-
-        function resetAdventure() {
-            if (confirm("Apakah Anda yakin ingin menyerah dan mereset semua progres petualangan?")) {
-                stopLocationTracking();
-                localStorage.removeItem('dragonRadarState');
-                
-                // PERUBAHAN: Tampilkan notifikasi sebelum me-reload halaman
-                showNotification("Loss, sayonara!");
-                
-                // Tunggu 5 detik agar notifikasi terbaca, lalu reload
-                setTimeout(() => {
-                    location.reload();
-                }, 5000);
-            }
-        }
-
-        function updateUI() {
-            dbListItems.forEach((item, index) => {
-                item.className = 'db-item';
-                if (CONFIG.dragonBalls[index].claimed) {
-                    item.classList.add('found');
-                } else if (CONFIG.dragonBalls[index].revealed) {
-                    item.classList.add('active');
-                }
-            });
-        }
-
-        function showNotification(message) {
-            const overlay = document.getElementById('notification-overlay');
-            const messageEl = document.getElementById('notification-message');
-            messageEl.textContent = message;
-            overlay.style.display = 'flex';
-            setTimeout(() => { overlay.style.display = 'none'; }, 5000);
-        }
-
-        function setupEventListeners() {
-            document.getElementById('start-stop-btn').addEventListener('click', () => {
-                if (watchId) {
-                    stopLocationTracking();
-                } else {
-                    startLocationTracking();
-                }
-            });
-            document.getElementById('recenter-btn').addEventListener('click', () => {
-                if (userMarker) {
-                    map.setView(userMarker.getLatLng(), 18);
-                } else {
-                    alert("Lokasi belum ditemukan. Klik 'Mulai' untuk memulai pelacakan.");
-                }
-            });
-            document.getElementById('reset-btn').addEventListener('click', resetAdventure);
-        }
-        
-        // Inisialisasi Aplikasi
-        initApp();
-        console.log("Aplikasi Dragon Radar siap.");
-    </script>
+    // ===================== START =====================
+    initApp();
+    console.log('Aplikasi Dragon Radar siap.');
+  </script>
 </body>
 </html>
