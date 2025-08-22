@@ -15,132 +15,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
-    /* =========================================================
-       ==============  THEME & GLOBAL STYLES  ==================
-       ========================================================= */
-    :root{
-      --bg: #0d1117;
-      --panel: rgba(13,17,23,0.85);
-      --panel-strong: rgba(13,17,23,0.95);
-      --accent: #f6ad55;
-      --muted: #8b949e;
-      --muted-2: #2f3a45;
-      --light: #f0f6fc;
-      --red: #e5534b;
-      --green: #3fb950;
-      --map-dark: #0b0d0f;
-      --shadow-deep: 0 20px 60px rgba(0,0,0,0.55);
-    }
-
-    html,body{
-      height:100%;
-      margin:0;
-      padding:0;
-      font-family:'Orbitron',sans-serif;
-      background:var(--bg);
-      color:var(--light);
-      overflow:hidden;
-    }
-
-    #map{
-      position:absolute;top:0;left:0;right:0;bottom:0;z-index:1
-    }
-
-    /* =========================================================
-       =====================  HEADER  ==========================
-       ========================================================= */
-    .main-header{
-      position:absolute;
-      top:10px;
-      left:50%;
-      transform:translateX(-50%);
-      z-index:1100;
-      background:rgba(13,17,23,0.9);
-      padding:8px 22px;
-      border-radius:28px;
-      border:1px solid var(--accent);
-      box-shadow:0 0 18px rgba(246,173,85,0.25)
-    }
-    .main-header h1{
-      margin:0;
-      font-size:1.2rem;
-      color:var(--accent);
-      text-shadow:0 0 8px rgba(246,173,85,0.25)
-    }
-
-    /* =========================================================
-       ==============  STATUS PANEL (Collapsible)  =============
-       ========================================================= */
-    #progress-panel{
-      position:absolute;
-      right:12px;
-      top:70px;
-      width:320px;
-      background:var(--panel);
-      border:1px solid var(--muted);
-      border-radius:10px;
-      padding:0;
-      z-index:1100;
-      backdrop-filter:blur(4px);
-      box-shadow:0 10px 30px rgba(0,0,0,0.35);
-      overflow:hidden;
-      transition: box-shadow .2s ease, transform .15s ease;
-    }
-    #progress-panel:hover{
-      transform: translateY(-1px);
-      box-shadow:0 14px 38px rgba(0,0,0,0.42);
-    }
-
-    .progress-header{
-      margin:0;
-      padding:10px 12px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
-      border-bottom:1px solid var(--muted);
-      color:var(--light);
-      letter-spacing:1px
-    }
-    .progress-header .title{
-      font-size:0.95rem;
-      font-weight:700;
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    .progress-header .hint{
-      font-size:0.75rem;
-      opacity:.75;
-    }
-
-    #progress-toggle{
-      background:#21262d;
-      border:1px solid var(--muted);
-      color:var(--light);
-      padding:6px 10px;
-      border-radius:8px;
-      font-family:'Orbitron',sans-serif;
-      cursor:pointer;
-      transition:all .15s ease;
-      line-height:1;
-      min-width:38px;
-      text-align:center;
-      user-select:none;
-    }
-    #progress-toggle:hover{
-      background:var(--accent);
-      color:var(--bg);
-      border-color:var(--accent);
-    }
-
-    #status-body{
-      max-height:calc(100vh - 220px);
-      overflow:auto;
-      transition: max-height .25s ease, opacity .2s ease;
-      opacity:1;
-    }
-
+    /* (stylesheet sama persis seperti versi Anda; saya tidak mengubah styling) */
+    :root{ --bg:#0d1117; --panel:rgba(13,17,23,0.85); --panel-strong:rgba(13,17,23,0.95); --accent:#f6ad55; --muted:#8b949e; --muted-2:#2f3a45; --light:#f0f6fc; --red:#e5534b; --green:#3fb950; --map-dark:#0b0d0f; --shadow-deep:0 20px 60px rgba(0,0,0,0.55); }
+    html,body{height:100%;margin:0;padding:0;font-family:'Orbitron',sans-serif;background:var(--bg);color:var(--light);overflow:hidden}
+    #map{position:absolute;top:0;left:0;right:0;bottom:0;z-index:1}
+    .main-header{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:1100;background:rgba(13,17,23,0.9);padding:8px 22px;border-radius:28px;border:1px solid var(--accent);box-shadow:0 0 18px rgba(246,173,85,0.25)}
+    .main-header h1{margin:0;font-size:1.2rem;color:var(--accent);text-shadow:0 0 8px rgba(246,173,85,0.25)}
+    #progress-panel{position:absolute;right:12px;top:70px;width:320px;background:var(--panel);border:1px solid var(--muted);border-radius:10px;padding:0;z-index:1100;backdrop-filter:blur(4px);box-shadow:0 10px 30px rgba(0,0,0,0.35);overflow:hidden;transition: box-shadow .2s ease, transform .15s ease}
+    #progress-panel:hover{transform: translateY(-1px);box-shadow:0 14px 38px rgba(0,0,0,0.42)}
+    .progress-header{margin:0;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--muted);color:var(--light);letter-spacing:1px}
+    .progress-header .title{font-size:0.95rem;font-weight:700;display:flex;align-items:center;gap:8px}
+    .progress-header .hint{font-size:0.75rem;opacity:.75}
+    #progress-toggle{background:#21262d;border:1px solid var(--muted);color:var(--light);padding:6px 10px;border-radius:8px;font-family:'Orbitron',sans-serif;cursor:pointer;transition:all .15s ease;line-height:1;min-width:38px;text-align:center;user-select:none}
+    #progress-toggle:hover{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+    #status-body{max-height:calc(100vh - 220px);overflow:auto;transition: max-height .25s ease, opacity .2s ease;opacity:1}
     #db-list{list-style:none;padding:10px;margin:0}
     .db-item{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;margin-bottom:8px;background:transparent;opacity:0.92}
     .db-item .left{display:flex;flex-direction:column}
@@ -149,65 +37,27 @@
     .db-item .dist{font-weight:700;color:#dbe7f8}
     .db-item.active{background:rgba(229,62,62,0.08)}
     .db-item.found{background:rgba(63,185,80,0.08);text-decoration:line-through}
-
-    #progress-panel.collapsed #status-body{
-      max-height:0;
-      opacity:0;
-      overflow:hidden;
-    }
-    #progress-panel.collapsed{
-      box-shadow:0 6px 16px rgba(0,0,0,0.28);
-    }
-
-    /* =========================================================
-       ===================  BOTTOM CONTROLS  ===================
-       ========================================================= */
-    #bottom-controls{
-      position:absolute;left:10px;right:10px;bottom:16px;
-      display:flex;justify-content:space-between;align-items:center;gap:12px;z-index:1100
-    }
-    .control-left, .control-center, .control-right{display:flex;align-items:center;gap:12px}
-    .control-btn{
-      background:#21262d;border:1px solid var(--muted);color:var(--light);
-      padding:10px 18px;border-radius:28px;font-family:'Orbitron',sans-serif;cursor:pointer;transition:all .15s ease
-    }
+    #progress-panel.collapsed #status-body{max-height:0;opacity:0;overflow:hidden}
+    #progress-panel.collapsed{box-shadow:0 6px 16px rgba(0,0,0,0.28)}
+    #bottom-controls{position:absolute;left:10px;right:10px;bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;z-index:1100}
+    .control-left,.control-center,.control-right{display:flex;align-items:center;gap:12px}
+    .control-btn{background:#21262d;border:1px solid var(--muted);color:var(--light);padding:10px 18px;border-radius:28px;font-family:'Orbitron',sans-serif;cursor:pointer;transition:all .15s ease}
     .control-btn:hover{background:var(--accent);color:var(--bg);border-color:var(--accent)}
     .control-btn.stop{background:var(--red);color:#fff}
     .center-button{margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:8px}
-    .gps-card{
-      background:rgba(22,27,34,0.9);padding:8px 14px;border-radius:12px;border:1px solid var(--muted);
-      font-size:0.92rem;box-shadow:0 4px 14px rgba(0,0,0,0.5)
-    }
-
-    /* =========================================================
-       ==================  FINAL BOSS PANEL  ===================
-       ========================================================= */
-    #final-panel{
-      position:absolute;left:50%;transform:translateX(-50%);bottom:90px;z-index:1101;
-      background:var(--panel-strong);border:1px solid var(--accent);padding:12px;border-radius:12px;min-width:340px;
-      display:none;backdrop-filter:blur(6px);box-shadow:0 0 18px rgba(246,173,85,0.2)
-    }
+    .gps-card{background:rgba(22,27,34,0.9);padding:8px 14px;border-radius:12px;border:1px solid var(--muted);font-size:0.92rem;box-shadow:0 4px 14px rgba(0,0,0,0.5)}
+    #final-panel{position:absolute;left:50%;transform:translateX(-50%);bottom:90px;z-index:1101;background:var(--panel-strong);border:1px solid var(--accent);padding:12px;border-radius:12px;min-width:340px;display:none;backdrop-filter:blur(6px);box-shadow:0 0 18px rgba(246,173,85,0.2)}
     #final-panel h3{margin:0 0 8px 0;color:var(--accent);text-align:center}
     #final-panel .final-row{display:flex;gap:8px}
     #final-panel input{flex:1;background:var(--bg);border:1px solid var(--muted);border-radius:8px;padding:10px 12px;color:var(--light)}
     #final-panel button{background:var(--accent);border:none;border-radius:8px;padding:10px 12px;font-weight:700;cursor:pointer;color:var(--bg)}
-
-    /* =========================================================
-       ==============  TOAST & CENTER MESSAGE  =================
-       ========================================================= */
     #notification-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:1200}
     #notification-message{background:rgba(22,27,34,0.98);padding:18px;border-radius:10px;border:1px solid var(--muted);color:var(--light);font-size:1rem;min-width:260px;text-align:center}
     #notification-overlay.toast-success #notification-message{border-color:var(--green);box-shadow:0 0 18px rgba(63,185,80,0.18)}
     #notification-overlay.toast-error #notification-message{border-color:var(--red);box-shadow:0 0 18px rgba(229,83,75,0.18)}
     #notification-overlay.toast-warn #notification-message{border-color:var(--accent);box-shadow:0 0 18px rgba(246,173,85,0.18)}
-
-    /* Center info message */
     #center-info{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1250;display:none;pointer-events:none}
     #center-info .card{background:rgba(22,27,34,0.96);padding:18px;border-radius:12px;border:1px solid var(--muted);min-width:300px;text-align:center;color:var(--light);font-size:1.05rem}
-
-    /* =========================================================
-       ====================  CLAIM MODAL  ======================
-       ========================================================= */
     #claim-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:1300;background:rgba(0,0,0,0.55)}
     .claim-card{background:rgba(13,17,23,0.98);padding:14px;border-radius:12px;border:1px solid var(--muted);min-width:320px;max-width:90%;color:var(--light)}
     .claim-card h4{margin:0 0 10px 0;color:var(--accent)}
@@ -216,84 +66,28 @@
     .claim-row .meta{display:flex;flex-direction:column}
     .claim-row button{background:var(--accent);border:none;border-radius:8px;padding:8px 10px;color:var(--bg);cursor:pointer}
     .claim-row button.disabled{background:#444;color:#aaa;cursor:not-allowed}
-
-    /* =========================================================
-       ===========  MARKERS & PULSE ANIMATION  =================
-       ========================================================= */
     .db-marker-el{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #fff;font-weight:700;color:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.6)}
     .db-marker-el.num{background:#e53e3e}
     .db-found-el{width:22px;height:22px;border-radius:50%;background:var(--green);border:1px solid #0b0b0b}
-
     .pulse-ring{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;pointer-events:none;opacity:0.9}
     .pulse-ring::after{content:'';position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 2px rgba(229,62,62,0.25)}
     .pulse-anim{animation:pulse 1.6s infinite ease-out}
-    @keyframes pulse{
-      0%{transform:translate(-50%,-50%) scale(0.6);opacity:0.8}
-      70%{transform:translate(-50%,-50%) scale(1.6);opacity:0}
-      100%{opacity:0}
-    }
-
-    /* =========================================================
-       ==================  VICTORY SCREEN  =====================
-       ========================================================= */
-    #victory-screen{
-      position:fixed; inset:0; display:none;
-      z-index:2000;
-      background: radial-gradient(1200px 600px at 50% -10%, rgba(246,173,85,0.2), rgba(0,0,0,0.9)),
-                  rgba(0,0,0,0.92);
-      backdrop-filter: blur(2px);
-      align-items:center; justify-content:center; flex-direction:column;
-      text-align:center; color:var(--light);
-      padding:20px;
-    }
+    @keyframes pulse{0%{transform:translate(-50%,-50%) scale(0.6);opacity:0.8}70%{transform:translate(-50%,-50%) scale(1.6);opacity:0}100%{opacity:0}}
+    #victory-screen{position:fixed; inset:0; display:none; z-index:2000; background: radial-gradient(1200px 600px at 50% -10%, rgba(246,173,85,0.2), rgba(0,0,0,0.9)), rgba(0,0,0,0.92); backdrop-filter: blur(2px); align-items:center; justify-content:center; flex-direction:column; text-align:center; color:var(--light); padding:20px}
     #victory-title{font-size:2rem; margin:0 0 10px 0; color:var(--accent); text-shadow:0 0 16px rgba(246,173,85,0.35)}
     #victory-sub{font-size:1.1rem; margin:0 0 14px 0; opacity:0.95}
-    #victory-img{
-      max-width:min(86vw,620px);
-      max-height:min(60vh,520px);
-      border-radius:14px;
-      box-shadow:var(--shadow-deep);
-      border:1px solid rgba(255,255,255,0.08);
-      margin-bottom:14px
-    }
+    #victory-img{max-width:min(86vw,620px);max-height:min(60vh,520px);border-radius:14px;box-shadow:var(--shadow-deep);border:1px solid rgba(255,255,255,0.08);margin-bottom:14px}
     .victory-row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:center}
-    .victory-btn{
-      background:#21262d; color:#fff; border:1px solid var(--muted);
-      padding:10px 16px; border-radius:12px; cursor:pointer; font-family:'Orbitron',sans-serif;
-    }
+    .victory-btn{background:#21262d; color:#fff; border:1px solid var(--muted); padding:10px 16px; border-radius:12px; cursor:pointer; font-family:'Orbitron',sans-serif}
     .victory-btn:hover{ background:var(--accent); color:var(--bg); border-color:var(--accent) }
     #sound-hint{ font-size:0.86rem; opacity:0.85; margin-top:8px }
-
-    /* =========================================================
-       =====================  RESPONSIVE  ======================
-       ========================================================= */
-    @media (max-width:1024px){
-      #progress-panel{ width:300px; right:10px; top:64px }
-    }
-    @media (max-width:720px){
-      #progress-panel{ width:260px; right:8px; top:60px }
-      #final-panel{ min-width:280px }
-      #victory-title{ font-size:1.6rem }
-      #victory-sub{ font-size:1rem }
-      .progress-header .hint{ display:none }
-    }
-
+    @media (max-width:1024px){#progress-panel{ width:300px; right:10px; top:64px }} @media (max-width:720px){#progress-panel{ width:260px; right:8px; top:60px }#final-panel{ min-width:280px }#victory-title{ font-size:1.6rem }#victory-sub{ font-size:1rem } .progress-header .hint{ display:none } }
   </style>
 </head>
 <body>
-  <!-- ===================================================== -->
-  <!-- =====================  HEADER  ====================== -->
-  <!-- ===================================================== -->
-  <header class="main-header" aria-label="Judul Aplikasi">
-    <h1>🐉 DRAGON RADAR</h1>
-  </header>
-
-  <!-- PETA -->
+  <header class="main-header" aria-label="Judul Aplikasi"><h1>🐉 DRAGON RADAR</h1></header>
   <div id="map" role="application" aria-label="Peta Dragon Radar"></div>
 
-  <!-- ===================================================== -->
-  <!-- ============  STATUS PENCARIAN (Collapsible)  ======= -->
-  <!-- ===================================================== -->
   <aside id="progress-panel" aria-label="Status pencarian Dragon Ball" data-collapsible="true">
     <div class="progress-header">
       <div class="title">STATUS PENCARIAN <span class="hint">klik tombol untuk sembunyikan</span></div>
@@ -309,30 +103,20 @@
     </div>
   </aside>
 
-  <!-- ===================================================== -->
-  <!-- ==================  BOTTOM CONTROLS  ================= -->
-  <!-- ===================================================== -->
   <div id="bottom-controls">
     <div class="control-left">
       <button id="start-stop-btn" class="control-btn" aria-pressed="false">🚀 Mulai</button>
     </div>
-
     <div class="control-center center-button">
-      <!-- GPS CARD DIHAPUS -> DIGANTI DENGAN TOMBOL PESAN (sesuai permintaan) -->
       <button id="message-btn" class="control-btn" title="Buka pesan broadcast">📩 PESAN</button>
-
       <button id="center-btn" class="control-btn"> Pusatkan </button>
       <button id="claim-open-btn" class="control-btn" title="Tekan jika sudah menerima kode dari panitia">🎯 Bola Diterima</button>
     </div>
-
     <div class="control-right" style="justify-self:end">
       <button id="reset-btn" class="control-btn">🏳️ Menyerah!</button>
     </div>
   </div>
 
-  <!-- ===================================================== -->
-  <!-- =================  FINAL BOSS PANEL  ================= -->
-  <!-- ===================================================== -->
   <div id="final-panel">
     <h3>⚔️ FINAL BOSS — PLN</h3>
     <div class="final-row">
@@ -342,9 +126,6 @@
     <div style="margin-top:8px;font-size:0.83rem;opacity:0.9">Harus 6 bola terklaim. (Kode final dicek panitia)</div>
   </div>
 
-  <!-- ===================================================== -->
-  <!-- ====================  CLAIM MODAL  =================== -->
-  <!-- ===================================================== -->
   <div id="claim-modal" aria-hidden="true">
     <div class="claim-card" role="dialog" aria-modal="true" aria-labelledby="claim-title">
       <h4 id="claim-title">Klaim Bola — Pilih lokasi</h4>
@@ -355,9 +136,6 @@
     </div>
   </div>
 
-  <!-- ===================================================== -->
-  <!-- ==================  MESSAGE (BROADCAST) MODAL  ========= -->
-  <!-- ===================================================== -->
   <div id="message-modal" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;z-index:1400;background:rgba(0,0,0,0.55)">
     <div class="claim-card" role="dialog" aria-modal="true" aria-labelledby="message-title" style="max-width:860px;max-height:80vh;overflow:auto">
       <h4 id="message-title" style="color:var(--accent);margin-top:0;">Broadcast</h4>
@@ -368,23 +146,14 @@
     </div>
   </div>
 
-  <!-- ===================================================== -->
-  <!-- ===============  TOAST & CENTER INFO  ================ -->
-  <!-- ===================================================== -->
   <div id="notification-overlay" role="status" aria-live="polite"><div id="notification-message"></div></div>
   <div id="center-info"><div class="card" id="center-info-card"></div></div>
 
-  <!-- ===================================================== -->
-  <!-- ==================  VICTORY SCREEN  ================== -->
-  <!-- ===================================================== -->
   <div id="victory-screen" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Layar Kemenangan">
     <h2 id="victory-title">SELAMAT YE! 🎉</h2>
     <p id="victory-sub">DEJAHIM TERCYNTAH!</p>
     <img id="victory-img" src="meme dejahim.jpg" alt="Meme kemenangan: Dejahim Tercyntah" />
-    <audio id="victory-audio"
-           src="different-heaven-safe-and-sound-[ncs-release]-made-with-Voicemod.mp3"
-           preload="auto"
-           loop></audio>
+    <audio id="victory-audio" src="different-heaven-safe-and-sound-[ncs-release]-made-with-Voicemod.mp3" preload="auto" loop></audio>
     <div class="victory-row" style="margin-top:6px">
       <button id="victory-sound-btn" class="victory-btn">🔊 Putar Musik</button>
       <button id="victory-restart-btn" class="victory-btn">🔄 Restart</button>
@@ -393,35 +162,32 @@
     <div id="sound-hint">Jika musik belum terdengar, tekan <b>Putar Musik</b>.</div>
   </div>
 
-  <!-- ===================================================== -->
-  <!-- ===================  CORE SCRIPTS  =================== -->
-  <!-- ===================================================== -->
   <script>
     /******************************************************************
-     * Dragon Radar
-     * - Klaim kapan saja (dengan kode benar)
-     * - Final Boss muncul setelah 6 bola terklaim
-     * - Victory Screen + musik loop
-     * - NEW: tombol PESAN & broadcast messages (minimal changes)
-     * - REVISI: konfirmasi saat menutup modal PESAN
+     * Perubahan kunci:
+     * - saveState() sekarang menyimpan HANYA runtime flags (claimed/revealed/ts).
+     * - loadState() melakukan merge aman agar pos/title/code tidak tertimpa.
+     * - broadcast state tetap disimpan.
+     *
+     * Jika melihat lokasi lama: hapus localStorage 'dragonRadarState' & 'dragonRadarBroadcast'
+     * di Console sebelum reload.
      ******************************************************************/
 
-    // ---------------------- KONFIGURASI ----------------------
     const initialConfig = {
       GEOFENCE_RADIUS_METERS: 15,
       mapCenter: { lat: -6.8917, lng: 107.6106 },
       dragonBalls: [
-        { pos: { lat: -6.891402262078686, lng: 107.60986788020188 }, title: 'Dragon Ball 1', code: 'KAMEH', claimed: false, revealed: false, ts: null },
-        { pos: { lat: -6.890490, lng: 107.608869 }, title: 'Dragon Ball 2', code: 'SENZU', claimed: false, revealed: false, ts: null },
+        { pos: { lat: -6.8915128, lng: 107.6098626 }, title: 'Dragon Ball 1', code: 'KAMEH', claimed: false, revealed: false, ts: null },
+        { pos: { lat: -6.8906480, lng: 107.6088222 }, title: 'Dragon Ball 2', code: 'SENZU', claimed: false, revealed: false, ts: null },
         { pos: { lat: -6.8896864, lng: 107.6087347 }, title: 'Dragon Ball 3', code: 'NIMBU', claimed: false, revealed: false, ts: null },
-        { pos: { lat: -6.892274, lng: 107.608534 }, title: 'Dragon Ball 4', code: 'AETHER', claimed: false, revealed: false, ts: null },
-        { pos: { lat: -6.888278359981987, lng: 107.61082908926849 }, title: 'Dragon Ball 5', code: 'TURBO', claimed: false, revealed: false, ts: null },
+        { pos: { lat: -6.8922590, lng: 107.6085191 }, title: 'Dragon Ball 4', code: 'AETHER', claimed: false, revealed: false, ts: null },
+        { pos: { lat: -6.8879406, lng: 107.6107990 }, title: 'Dragon Ball 5', code: 'TURBO', claimed: false, revealed: false, ts: null },
         { pos: { lat: -6.888294319040551, lng: 107.61004341921445 }, title: 'Dragon Ball 6', code: 'SPARK', claimed: false, revealed: false, ts: null },
         { pos: { lat: -6.889397475056475, lng: 107.61072630941614 }, title: 'Dragon Ball 7 (FINAL)', code: 'ZENOS', claimed: false, revealed: false, ts: null }
       ]
     };
 
-    // ---------------------- STATE VAR ----------------------
+    // State vars (sama)
     let CONFIG;
     let map, userMarker, userLatLng = null, watchId = null;
     let dbListItems = [];
@@ -429,11 +195,8 @@
     let foundMarkers = {};
     let isClaiming = false;
     let pulseNearestIdx = null;
-
-    // Broadcast state: next available broadcast ball number (2..7) or null
     let nextBroadcastIndex = null;
 
-    // Broadcast message contents (strings) keyed by ball number '2'..'7'
     const broadcastMessages = {
 '2': `--------------- Broadcast dragon ball 2 -------------------
 
@@ -567,7 +330,7 @@ dan hanya mereka yang mengerti arti “daya”
 yang bisa menyentuhnya. 🐉🌟`
     };
 
-    // ---------------------- UTILS ----------------------
+    // --- UTILS (sama)
     function getDistanceBetween(lat1, lon1, lat2, lon2){
       const R = 6371000;
       const toRad = a => a * Math.PI / 180;
@@ -579,17 +342,25 @@ yang bisa menyentuhnya. 🐉🌟`
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
       return R * c;
     }
-
     function prettyDistance(m){
       if (m === null || m === undefined || isNaN(m)) return '—';
       if (m < 1000) return `${Math.round(m)} m`;
       return `${(m/1000).toFixed(2)} km`;
     }
 
+    // ---------------------- SAVE / LOAD STATE — SAFE ----------------------
     function saveState(){
       try{
-        localStorage.setItem('dragonRadarState', JSON.stringify(CONFIG.dragonBalls));
-      }catch(e){ console.warn('saveState error', e) }
+        // Simpan hanya runtime flags, bukan pos/title/code
+        const slim = CONFIG.dragonBalls.map(b => ({
+          claimed: !!b.claimed,
+          revealed: !!b.revealed,
+          ts: b.ts || null
+        }));
+        localStorage.setItem('dragonRadarState', JSON.stringify(slim));
+      }catch(e){
+        console.warn('saveState error', e);
+      }
 
       try{
         localStorage.setItem('dragonRadarBroadcast', JSON.stringify({ nextBroadcastIndex }));
@@ -597,18 +368,44 @@ yang bisa menyentuhnya. 🐉🌟`
     }
 
     function loadState(){
-      const saved = localStorage.getItem('dragonRadarState');
-      if(saved){
-        try{
-          const savedBalls = JSON.parse(saved);
-          CONFIG = JSON.parse(JSON.stringify(initialConfig));
-          CONFIG.dragonBalls = initialConfig.dragonBalls.map((db, idx) => ({ ...db, ...(savedBalls[idx]||{}) }));
-        }catch(e){
-          console.warn('loadState parse error', e);
-          CONFIG = JSON.parse(JSON.stringify(initialConfig));
+      // Always start from initialConfig (so pos/title/code from code are authoritative)
+      CONFIG = JSON.parse(JSON.stringify(initialConfig));
+
+      // Load slim saved state if present and merge only runtime fields
+      try{
+        const raw = localStorage.getItem('dragonRadarState');
+        if(raw){
+          const saved = JSON.parse(raw);
+          if(Array.isArray(saved)){
+            CONFIG.dragonBalls = CONFIG.dragonBalls.map((db, idx) => {
+              const s = saved[idx] || {};
+              return {
+                ...db,
+                claimed: s.hasOwnProperty('claimed') ? !!s.claimed : db.claimed,
+                revealed: s.hasOwnProperty('revealed') ? !!s.revealed : db.revealed,
+                ts: s.hasOwnProperty('ts') ? (s.ts || null) : db.ts
+              };
+            });
+          } else {
+            // If old format (legacy full objects) exists, try to migrate but avoid overwriting pos/title/code
+            try{
+              const savedBalls = Array.isArray(saved) ? saved : null;
+              if(savedBalls){
+                CONFIG.dragonBalls = CONFIG.dragonBalls.map((db, idx) => {
+                  const s = savedBalls[idx] || {};
+                  return {
+                    ...db,
+                    claimed: s.hasOwnProperty('claimed') ? !!s.claimed : db.claimed,
+                    revealed: s.hasOwnProperty('revealed') ? !!s.revealed : db.revealed,
+                    ts: s.hasOwnProperty('ts') ? (s.ts || null) : db.ts
+                  };
+                });
+              }
+            }catch(e2){}
+          }
         }
-      } else {
-        CONFIG = JSON.parse(JSON.stringify(initialConfig));
+      }catch(e){
+        console.warn('loadState parse error', e);
       }
 
       // load broadcast state
@@ -618,7 +415,7 @@ yang bisa menyentuhnya. 🐉🌟`
       }catch(e){ nextBroadcastIndex = null; }
     }
 
-    // ---------------------- INIT APP ----------------------
+    // ---------------------- APP INIT ----------------------
     function initApp(){
       loadState();
       initMap();
@@ -630,7 +427,6 @@ yang bisa menyentuhnya. 🐉🌟`
       updateMessageButton();
     }
 
-    // ---------------------- MAP & MARKERS ----------------------
     function initMap(){
       map = L.map('map', { zoomControl:true }).setView([CONFIG.mapCenter.lat, CONFIG.mapCenter.lng], 16);
       L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
@@ -641,14 +437,11 @@ yang bisa menyentuhnya. 🐉🌟`
     function createActiveMarker(index){
       const ball = CONFIG.dragonBalls[index];
       if(activeMarkers[index] || foundMarkers[index]) return;
-
       const html = `<div class="db-marker-el num" data-idx="${index}">${index+1}</div>`;
       const icon = L.divIcon({ html, className: 'db-marker-wrap', iconSize:[28,28], iconAnchor:[14,14] });
       const marker = L.marker([ball.pos.lat, ball.pos.lng], { icon }).addTo(map);
-
       const popupHtml = `<div style="color:#f0f6fc;font-weight:700">${ball.title} TERDETEKSI!</div><div style="font-size:0.85rem;color:#cbd5e1">Tekan "Bola Diterima" untuk klaim jika panitia sudah verifikasi kode.</div>`;
       marker.bindPopup(popupHtml, { closeOnClick:false, autoClose:false });
-
       activeMarkers[index] = marker;
       try{ marker.openPopup(); setTimeout(()=>marker.closePopup(), 2500); }catch(e){}
       return marker;
@@ -671,10 +464,9 @@ yang bisa menyentuhnya. 🐉🌟`
     }
 
     function rebuildMarkersFromState(){
-      Object.keys(activeMarkers).forEach(k=>{ try{ map.removeLayer(activeMarkers[k]) }catch(e){} })
-      Object.keys(foundMarkers).forEach(k=>{ try{ map.removeLayer(foundMarkers[k]) }catch(e){} })
+      Object.keys(activeMarkers).forEach(k=>{ try{ map.removeLayer(activeMarkers[k]) }catch(e){} });
+      Object.keys(foundMarkers).forEach(k=>{ try{ map.removeLayer(foundMarkers[k]) }catch(e){} });
       activeMarkers = {}; foundMarkers = {};
-
       CONFIG.dragonBalls.forEach((db, idx) => {
         if(db.claimed){
           createFoundMarker(idx);
@@ -684,7 +476,7 @@ yang bisa menyentuhnya. 🐉🌟`
       });
     }
 
-    // ---------------------- UI (list, gps/message) ----------------------
+    // UI, geolocation, geofence, claim flow, broadcast modal handlers
     function initUI(){
       const list = document.getElementById('db-list');
       list.innerHTML = '';
@@ -705,51 +497,32 @@ yang bisa menyentuhnya. 🐉🌟`
         const db = CONFIG.dragonBalls[idx];
         const sub = li.querySelector(`#db-sub-${idx}`);
         const distEl = li.querySelector(`#db-dist-${idx}`);
-        if(db.claimed) {
-          li.classList.add('found'); li.classList.remove('active');
-          sub.textContent = 'Terklaim';
-        } else if (db.revealed){
-          li.classList.add('active'); li.classList.remove('found');
-          sub.textContent = 'Terdeteksi';
-        } else {
-          li.classList.remove('active'); li.classList.remove('found');
-          sub.textContent = 'Tersembunyi';
-        }
-
+        if(db.claimed) { li.classList.add('found'); li.classList.remove('active'); sub.textContent = 'Terklaim'; }
+        else if (db.revealed){ li.classList.add('active'); li.classList.remove('found'); sub.textContent = 'Terdeteksi'; }
+        else { li.classList.remove('active'); li.classList.remove('found'); sub.textContent = 'Tersembunyi'; }
         if(userLatLng){
           const m = getDistanceBetween(userLatLng.lat, userLatLng.lng, db.pos.lat, db.pos.lng);
           distEl.textContent = prettyDistance(m);
           distEl.title = `${m.toFixed(1)} m`;
-        } else {
-          distEl.textContent = '—';
-        }
+        } else { distEl.textContent = '—'; }
       });
     }
 
-    // ---------------------- GEO TRACKING ----------------------
     function startLocationTracking(){
       if(watchId) return;
       showToast('Selamat berpetualang!', 'success', 5000);
-
-      if(!('geolocation' in navigator)){
-        alert('Perangkat Anda tidak mendukung geolocation.');
-        return;
-      }
+      if(!('geolocation' in navigator)){ alert('Perangkat Anda tidak mendukung geolocation.'); return; }
 
       watchId = navigator.geolocation.watchPosition(position => {
         const { latitude, longitude, accuracy } = position.coords;
         userLatLng = L.latLng(latitude, longitude);
-
         if(!userMarker){
           const html = '<div style="background:#4285F4;width:16px;height:16px;border-radius:50%;border:2px solid white;box-shadow:0 0 10px #4285F4"></div>';
           const icon = L.divIcon({ html, className:'user-marker', iconSize:[20,20], iconAnchor:[10,10] });
           userMarker = L.marker(userLatLng, { icon }).addTo(map);
           map.setView(userLatLng, 16);
-        } else {
-          userMarker.setLatLng(userLatLng);
-        }
+        } else { userMarker.setLatLng(userLatLng); }
 
-        // update GPS card IF exists (we removed it from DOM intentionally)
         const gpsCard = document.getElementById('gps-card');
         if(gpsCard){
           gpsCard.textContent = `GPS ±${Math.round(accuracy)} m — Lat:${latitude.toFixed(6)}, Lng:${longitude.toFixed(6)}`;
@@ -762,7 +535,6 @@ yang bisa menyentuhnya. 🐉🌟`
         checkGeofence();
         updateUI();
         updatePulseNearest();
-
       }, err => {
         console.error('watchPosition error', err);
         alert('Error: gagal mendapatkan lokasi. Pastikan izin lokasi diberikan.');
@@ -775,19 +547,13 @@ yang bisa menyentuhnya. 🐉🌟`
     }
 
     function stopLocationTracking(){
-      if(watchId){
-        navigator.geolocation.clearWatch(watchId);
-        watchId = null;
-      }
+      if(watchId){ navigator.geolocation.clearWatch(watchId); watchId = null; }
       document.getElementById('start-stop-btn').textContent = '🚀 Mulai';
       document.getElementById('start-stop-btn').classList.remove('stop');
       document.getElementById('start-stop-btn').setAttribute('aria-pressed','false');
-
-      const gpsCard = document.getElementById('gps-card');
-      if(gpsCard) gpsCard.style.display = 'none';
+      const gpsCard = document.getElementById('gps-card'); if(gpsCard) gpsCard.style.display = 'none';
     }
 
-    // ---------------------- GEOFENCE & REVEAL ----------------------
     function checkGeofence(){
       if(!userLatLng) return;
       CONFIG.dragonBalls.forEach((ball, idx) => {
@@ -804,7 +570,6 @@ yang bisa menyentuhnya. 🐉🌟`
       saveState();
     }
 
-    // ---------------------- PULSE NEAREST ----------------------
     function updatePulseNearest(){
       if(!userLatLng) return;
       let nearestIdx = null, nearestDist = Infinity;
@@ -844,12 +609,10 @@ yang bisa menyentuhnya. 🐉🌟`
       }
     }
 
-    // ---------------------- KLAIM (modal) ----------------------
     function openClaimModal(){
       const modal = document.getElementById('claim-modal');
       const list = document.getElementById('claim-list');
       list.innerHTML = '';
-
       CONFIG.dragonBalls.forEach((ball, idx) => {
         const dist = userLatLng ? getDistanceBetween(userLatLng.lat, userLatLng.lng, ball.pos.lat, ball.pos.lng) : null;
         const row = document.createElement('div'); row.className = 'claim-row';
@@ -857,13 +620,10 @@ yang bisa menyentuhnya. 🐉🌟`
         const title = document.createElement('div'); title.textContent = ball.title; title.style.fontWeight='700';
         const sub = document.createElement('div'); sub.textContent = `${ball.claimed? 'Sudah terklaim' : (ball.revealed ? 'Terdeteksi' : 'Tersembunyi')} • ${dist? prettyDistance(dist) : '—'}`; sub.style.fontSize='0.85rem'; sub.style.opacity='0.9';
         meta.appendChild(title); meta.appendChild(sub);
-
         const btn = document.createElement('button');
         btn.textContent = ball.claimed? 'Terklaim' : 'Klaim';
-
-        if(ball.claimed){
-          btn.classList.add('disabled'); btn.disabled = true;
-        } else {
+        if(ball.claimed){ btn.classList.add('disabled'); btn.disabled = true; }
+        else {
           btn.addEventListener('click', () => {
             const code = prompt(`Masukkan kode validasi untuk ${ball.title} (4–6 huruf):`);
             if(code === null) return;
@@ -875,11 +635,9 @@ yang bisa menyentuhnya. 🐉🌟`
             closeClaimModal();
           });
         }
-
         row.appendChild(meta); row.appendChild(btn);
         list.appendChild(row);
       });
-
       modal.style.display = 'flex';
       modal.setAttribute('aria-hidden','false');
     }
@@ -890,50 +648,38 @@ yang bisa menyentuhnya. 🐉🌟`
       modal.setAttribute('aria-hidden','true');
     }
 
-    // ---------------------- FINALISASI KLAIM (tambahan broadcast) ----------------------
     function finalizeClaim(index){
       if(isClaiming) return;
       const ball = CONFIG.dragonBalls[index];
       if(!ball || ball.claimed) { showToast('Sudah terklaim atau tidak ditemukan.', 'warn'); return; }
-
       isClaiming = true;
       ball.claimed = true;
       ball.ts = Date.now();
       ball.revealed = true;
       saveState();
-
       removeActiveMarker(index);
       createFoundMarker(index);
       updateUI();
-
       try{ map.setView([ball.pos.lat, ball.pos.lng], 17, { animate:true }); }catch(e){}
-
       showCenterInfo('Jangan lupa lanjutkan video vlog dan foto tiap pos dragon ball yak!', 8000);
       showToast('✅ Bola berhasil diklaim! Selamat!', 'success', 5000);
       isClaiming = false;
-
-      // Aktifkan broadcast untuk bola selanjutnya jika index 0..5 (DB1..DB6)
       if(index >= 0 && index <= 5){
-        nextBroadcastIndex = index + 2; // index0 -> 2, index1 -> 3, ..., index5 -> 7
+        nextBroadcastIndex = index + 2;
         saveState();
         showToast(`📩 Broadcast untuk Dragon Ball ${nextBroadcastIndex} tersedia. Klik PESAN.`, 'warn', 4000);
         updateMessageButton();
       }
-
       if(allFirstSixClaimed() && !CONFIG.dragonBalls[6].claimed){
         showToast('⚔️ 6 bola terkumpul! Final Boss terbuka.', 'success', 10000);
         updateFinalBossUI();
       }
     }
 
-    // ---------------------- FINAL BOSS ----------------------
     function updateFinalBossUI(){
       const panel = document.getElementById('final-panel');
-      if(allFirstSixClaimed() && !CONFIG.dragonBalls[6].claimed){
-        panel.style.display = 'block';
-      } else {
-        panel.style.display = 'none';
-      }
+      if(allFirstSixClaimed() && !CONFIG.dragonBalls[6].claimed){ panel.style.display = 'block'; }
+      else { panel.style.display = 'none'; }
     }
 
     document.getElementById('final-claim-btn').addEventListener('click', () => {
@@ -942,7 +688,6 @@ yang bisa menyentuhnya. 🐉🌟`
       const finalBall = CONFIG.dragonBalls[finalIdx];
       if(!allFirstSixClaimed()){ showToast('Kumpulkan 6 bola dulu!', 'warn'); return; }
       if(code.length < 4 || code !== finalBall.code){ showToast('❌ Kode final salah.', 'error'); return; }
-
       finalBall.revealed = true;
       finalBall.claimed = true;
       finalBall.ts = Date.now();
@@ -951,7 +696,6 @@ yang bisa menyentuhnya. 🐉🌟`
       updateUI(); updateFinalBossUI();
       showCenterInfo('🎉 SEMUA DRAGON BALL TERKUMPUL! Shenron dipanggil!', 4000);
       showToast('🎉 Final berhasil diklaim!', 'success', 4000);
-
       showVictoryScreen();
     });
 
@@ -965,11 +709,8 @@ yang bisa menyentuhnya. 🐉🌟`
       showVictoryScreen();
     };
 
-    function allFirstSixClaimed(){
-      return CONFIG.dragonBalls.slice(0,6).every(b => b.claimed);
-    }
+    function allFirstSixClaimed(){ return CONFIG.dragonBalls.slice(0,6).every(b => b.claimed); }
 
-    // ---------------------- TOAST & CENTER MSG ----------------------
     function showToast(message, type='info', dur=1600){
       const overlay = document.getElementById('notification-overlay');
       const msg = document.getElementById('notification-message');
@@ -992,39 +733,15 @@ yang bisa menyentuhnya. 🐉🌟`
       showCenterInfo._t = setTimeout(()=>{ wrap.style.display = 'none'; }, dur);
     }
 
-    // ---------------------- Victory helpers ----------------------
     function showVictoryScreen(){
       const scr = document.getElementById('victory-screen');
       scr.style.display = 'flex';
       scr.setAttribute('aria-hidden','false');
       tryPlayVictoryAudio();
     }
-
-    function hideVictoryScreen(){
-      const scr = document.getElementById('victory-screen');
-      scr.style.display = 'none';
-      scr.setAttribute('aria-hidden','true');
-      stopVictoryAudio();
-    }
-
-    function tryPlayVictoryAudio(){
-      const audio = document.getElementById('victory-audio');
-      if(!audio) return;
-      audio.currentTime = 0;
-      const p = audio.play();
-      if(p && typeof p.catch === 'function'){
-        p.catch(()=> {
-          document.getElementById('sound-hint').style.opacity = '1';
-        });
-      }
-    }
-
-    function stopVictoryAudio(){
-      const audio = document.getElementById('victory-audio');
-      if(audio && !audio.paused){
-        try{ audio.pause(); }catch(e){}
-      }
-    }
+    function hideVictoryScreen(){ const scr = document.getElementById('victory-screen'); scr.style.display = 'none'; scr.setAttribute('aria-hidden','true'); stopVictoryAudio(); }
+    function tryPlayVictoryAudio(){ const audio = document.getElementById('victory-audio'); if(!audio) return; audio.currentTime = 0; const p = audio.play(); if(p && typeof p.catch === 'function'){ p.catch(()=> { document.getElementById('sound-hint').style.opacity = '1'; }); } }
+    function stopVictoryAudio(){ const audio = document.getElementById('victory-audio'); if(audio && !audio.paused){ try{ audio.pause(); }catch(e){} } }
 
     function restartGame(){
       stopVictoryAudio();
@@ -1033,7 +750,6 @@ yang bisa menyentuhnya. 🐉🌟`
       location.reload();
     }
 
-    // ---------------------- Reset adventure ----------------------
     function resetAdventure(){
       if(!confirm('Apakah Anda yakin ingin mereset semua progres petualangan?')) return;
       stopLocationTracking();
@@ -1043,113 +759,30 @@ yang bisa menyentuhnya. 🐉🌟`
       setTimeout(()=> location.reload(), 1200);
     }
 
-    // ---------------------- COLLAPSIBLE PANEL ----------------
     const COLLAPSE_KEY = 'progressPanelCollapsed';
+    function toggleProgressPanel(){ const panel = document.getElementById('progress-panel'); const btn = document.getElementById('progress-toggle'); const willCollapse = !panel.classList.contains('collapsed'); panel.classList.toggle('collapsed', willCollapse); btn.textContent = willCollapse ? '+' : '−'; btn.setAttribute('aria-expanded', String(!willCollapse)); btn.setAttribute('title', willCollapse ? 'Tampilkan panel' : 'Sembunyikan panel'); try{ localStorage.setItem(COLLAPSE_KEY, willCollapse ? '1' : '0'); }catch(e){} }
+    function restorePanelCollapseState(){ const val = localStorage.getItem(COLLAPSE_KEY); const panel = document.getElementById('progress-panel'); const btn = document.getElementById('progress-toggle'); const collapsed = (val === '1'); panel.classList.toggle('collapsed', collapsed); btn.textContent = collapsed ? '+' : '−'; btn.setAttribute('aria-expanded', String(!collapsed)); btn.setAttribute('title', collapsed ? 'Tampilkan panel' : 'Sembunyikan panel'); }
 
-    function toggleProgressPanel(){
-      const panel = document.getElementById('progress-panel');
-      const btn = document.getElementById('progress-toggle');
-      const willCollapse = !panel.classList.contains('collapsed');
-      panel.classList.toggle('collapsed', willCollapse);
-      btn.textContent = willCollapse ? '+' : '−';
-      btn.setAttribute('aria-expanded', String(!willCollapse));
-      btn.setAttribute('title', willCollapse ? 'Tampilkan panel' : 'Sembunyikan panel');
-      try{ localStorage.setItem(COLLAPSE_KEY, willCollapse ? '1' : '0'); }catch(e){}
-    }
+    function updateMessageButton(){ const btn = document.getElementById('message-btn'); if(!nextBroadcastIndex){ btn.textContent = '📩 PESAN'; btn.title = 'Tidak ada pesan baru'; } else { btn.textContent = `📩 PESAN — Broadcast DB ${nextBroadcastIndex}`; btn.title = `Buka broadcast Dragon Ball ${nextBroadcastIndex}`; } }
+    function openMessageModal(idx){ const modal = document.getElementById('message-modal'); const content = document.getElementById('message-content'); const key = String(idx); const msg = broadcastMessages[key] || 'Pesan tidak ditemukan.'; content.textContent = msg; modal.style.display = 'flex'; }
+    function closeMessageModal(force=false){ const modal = document.getElementById('message-modal'); if(!modal || modal.style.display !== 'flex') return; if(!force){ const ok = confirm('Yakin kau juniro?! Pesan ini hanya 1x saja'); if(!ok) return; } nextBroadcastIndex = null; saveState(); updateMessageButton(); modal.style.display = 'none'; }
 
-    function restorePanelCollapseState(){
-      const val = localStorage.getItem(COLLAPSE_KEY);
-      const panel = document.getElementById('progress-panel');
-      const btn = document.getElementById('progress-toggle');
-      const collapsed = (val === '1');
-      panel.classList.toggle('collapsed', collapsed);
-      btn.textContent = collapsed ? '+' : '−';
-      btn.setAttribute('aria-expanded', String(!collapsed));
-      btn.setAttribute('title', collapsed ? 'Tampilkan panel' : 'Sembunyikan panel');
-    }
-
-    // ---------------------- MESSAGE BUTTON HELPERS ----------------------
-    function updateMessageButton(){
-      const btn = document.getElementById('message-btn');
-      if(!nextBroadcastIndex){
-        btn.textContent = '📩 PESAN';
-        btn.title = 'Tidak ada pesan baru';
-      } else {
-        btn.textContent = `📩 PESAN — Broadcast DB ${nextBroadcastIndex}`;
-        btn.title = `Buka broadcast Dragon Ball ${nextBroadcastIndex}`;
-      }
-    }
-
-    function openMessageModal(idx){
-      const modal = document.getElementById('message-modal');
-      const content = document.getElementById('message-content');
-      const key = String(idx);
-      const msg = broadcastMessages[key] || 'Pesan tidak ditemukan.';
-      content.textContent = msg;
-      modal.style.display = 'flex';
-      // NOTE: tidak mengosongkan nextBroadcastIndex di sini agar konfirmasi tutup bisa muncul
-      // nextBroadcastIndex akan di-clear ketika pengguna menutup modal dan mengonfirmasi
-    }
-
-    function closeMessageModal(force=false){
-      const modal = document.getElementById('message-modal');
-      if(!modal || modal.style.display !== 'flex') return;
-      // Jika tidak dipaksa, minta konfirmasi spesial:
-      if(!force){
-        const ok = confirm('Yakin kau juniro?! Pesan ini hanya 1x saja');
-        if(!ok) return; // batal jika user menekan Batal
-      }
-      // jika dikonfirmasi (atau dipaksa), hapus broadcast dan tutup
-      nextBroadcastIndex = null;
-      saveState();
-      updateMessageButton();
-      modal.style.display = 'none';
-    }
-
-    // ---------------------- SETUP EVENTS ---------------------
     function setupEventListeners(){
-      document.getElementById('start-stop-btn').addEventListener('click', ()=>{
-        if(watchId) stopLocationTracking(); else startLocationTracking();
-      });
-
-      document.getElementById('center-btn').addEventListener('click', ()=>{
-        if(userMarker) map.setView(userMarker.getLatLng(), 17, { animate:true });
-        else showToast("Lokasi belum ditemukan. Klik 'Mulai' untuk memulai pelacakan.", 'warn', 2000);
-      });
-
-      // Tombol PESAN
-      document.getElementById('message-btn').addEventListener('click', ()=>{
-        if(!nextBroadcastIndex){
-          showToast('Tidak ada pesan baru.', 'info', 2000);
-          return;
-        }
-        openMessageModal(nextBroadcastIndex);
-      });
-
+      document.getElementById('start-stop-btn').addEventListener('click', ()=>{ if(watchId) stopLocationTracking(); else startLocationTracking(); });
+      document.getElementById('center-btn').addEventListener('click', ()=>{ if(userMarker) map.setView(userMarker.getLatLng(), 17, { animate:true }); else showToast("Lokasi belum ditemukan. Klik 'Mulai' untuk memulai pelacakan.", 'warn', 2000); });
+      document.getElementById('message-btn').addEventListener('click', ()=>{ if(!nextBroadcastIndex){ showToast('Tidak ada pesan baru.', 'info', 2000); return; } openMessageModal(nextBroadcastIndex); });
       document.getElementById('claim-open-btn').addEventListener('click', openClaimModal);
       document.getElementById('claim-close').addEventListener('click', closeClaimModal);
       document.getElementById('reset-btn').addEventListener('click', resetAdventure);
-
       document.getElementById('message-close').addEventListener('click', ()=> closeMessageModal(false));
-
       document.getElementById('victory-restart-btn').addEventListener('click', restartGame);
       document.getElementById('victory-close-btn').addEventListener('click', hideVictoryScreen);
       document.getElementById('victory-sound-btn').addEventListener('click', tryPlayVictoryAudio);
-
       document.getElementById('progress-toggle').addEventListener('click', toggleProgressPanel);
-
-      window.addEventListener('keydown', (e)=>{
-        if(e.key==='Escape'){
-          const modal = document.getElementById('claim-modal');
-          if(modal.style.display === 'flex') { closeClaimModal(); return; }
-          const mm = document.getElementById('message-modal');
-          if(mm.style.display === 'flex') { closeMessageModal(false); return; }
-          toggleProgressPanel();
-        }
-      });
+      window.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ const modal = document.getElementById('claim-modal'); if(modal.style.display === 'flex') { closeClaimModal(); return; } const mm = document.getElementById('message-modal'); if(mm.style.display === 'flex') { closeMessageModal(false); return; } toggleProgressPanel(); } });
     }
 
-    // ---------------------- START ----------------------
+    // START
     initApp();
     console.log('Aplikasi Dragon Radar siap.');
 
