@@ -278,17 +278,6 @@
       .progress-header .hint{ display:none }
     }
 
-    /* ------- padding comments to ensure >800 lines -------- */
-    /* 1 */ /* 2 */ /* 3 */ /* 4 */ /* 5 */ /* 6 */ /* 7 */ /* 8 */ /* 9 */ /* 10 */
-    /* 11 */ /* 12 */ /* 13 */ /* 14 */ /* 15 */ /* 16 */ /* 17 */ /* 18 */ /* 19 */ /* 20 */
-    /* 21 */ /* 22 */ /* 23 */ /* 24 */ /* 25 */ /* 26 */ /* 27 */ /* 28 */ /* 29 */ /* 30 */
-    /* 31 */ /* 32 */ /* 33 */ /* 34 */ /* 35 */ /* 36 */ /* 37 */ /* 38 */ /* 39 */ /* 40 */
-    /* 41 */ /* 42 */ /* 43 */ /* 44 */ /* 45 */ /* 46 */ /* 47 */ /* 48 */ /* 49 */ /* 50 */
-    /* 51 */ /* 52 */ /* 53 */ /* 54 */ /* 55 */ /* 56 */ /* 57 */ /* 58 */ /* 59 */ /* 60 */
-    /* 61 */ /* 62 */ /* 63 */ /* 64 */ /* 65 */ /* 66 */ /* 67 */ /* 68 */ /* 69 */ /* 70 */
-    /* 71 */ /* 72 */ /* 73 */ /* 74 */ /* 75 */ /* 76 */ /* 77 */ /* 78 */ /* 79 */ /* 80 */
-    /* 81 */ /* 82 */ /* 83 */ /* 84 */ /* 85 */ /* 86 */ /* 87 */ /* 88 */ /* 89 */ /* 90 */
-    /* 91 */ /* 92 */ /* 93 */ /* 94 */ /* 95 */ /* 96 */ /* 97 */ /* 98 */ /* 99 */ /* 100 */
   </style>
 </head>
 <body>
@@ -329,8 +318,10 @@
     </div>
 
     <div class="control-center center-button">
-      <div id="gps-card" class="gps-card" aria-live="polite">GPS: —</div>
-      <button id="center-btn" class="control-btn">• Pusatkan</button>
+      <!-- GPS CARD DIHAPUS -> DIGANTI DENGAN TOMBOL PESAN (sesuai permintaan) -->
+      <button id="message-btn" class="control-btn" title="Buka pesan broadcast">📩 PESAN</button>
+
+      <button id="center-btn" class="control-btn"> Pusatkan </button>
       <button id="claim-open-btn" class="control-btn" title="Tekan jika sudah menerima kode dari panitia">🎯 Bola Diterima</button>
     </div>
 
@@ -360,6 +351,19 @@
       <div id="claim-list" class="claim-list"></div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button id="claim-close" class="control-btn">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- ==================  MESSAGE (BROADCAST) MODAL  ========= -->
+  <!-- ===================================================== -->
+  <div id="message-modal" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;z-index:1400;background:rgba(0,0,0,0.55)">
+    <div class="claim-card" role="dialog" aria-modal="true" aria-labelledby="message-title" style="max-width:860px;max-height:80vh;overflow:auto">
+      <h4 id="message-title" style="color:var(--accent);margin-top:0;">Broadcast</h4>
+      <div id="message-content" style="white-space:pre-wrap;color:var(--light);line-height:1.35;font-size:0.95rem;margin-bottom:12px"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button id="message-close" class="control-btn">Tutup</button>
       </div>
     </div>
   </div>
@@ -398,7 +402,8 @@
      * - Klaim kapan saja (dengan kode benar)
      * - Final Boss muncul setelah 6 bola terklaim
      * - Victory Screen + musik loop
-     * - NEW: Status panel bisa di-collapse/expand, state tersimpan
+     * - NEW: tombol PESAN & broadcast messages (minimal changes)
+     * - REVISI: konfirmasi saat menutup modal PESAN
      ******************************************************************/
 
     // ---------------------- KONFIGURASI ----------------------
@@ -407,9 +412,9 @@
       mapCenter: { lat: -6.8917, lng: 107.6106 },
       dragonBalls: [
         { pos: { lat: -6.891402262078686, lng: 107.60986788020188 }, title: 'Dragon Ball 1', code: 'KAMEH', claimed: false, revealed: false, ts: null },
-        { pos: { lat: -6.890317257283004, lng: 107.61193810855009 }, title: 'Dragon Ball 2', code: 'SENZU', claimed: false, revealed: false, ts: null },
-        { pos: { lat: -6.8895688198770255, lng: 107.60999326735156 }, title: 'Dragon Ball 3', code: 'NIMBU', claimed: false, revealed: false, ts: null },
-        { pos: { lat: -6.889638867816123, lng: 107.6088639094271 }, title: 'Dragon Ball 4', code: 'AETHER', claimed: false, revealed: false, ts: null },
+        { pos: { lat: -6.890490, lng: 107.608869 }, title: 'Dragon Ball 2', code: 'SENZU', claimed: false, revealed: false, ts: null },
+        { pos: { lat: -6.8896864, lng: 107.6087347 }, title: 'Dragon Ball 3', code: 'NIMBU', claimed: false, revealed: false, ts: null },
+        { pos: { lat: -6.892274, lng: 107.608534 }, title: 'Dragon Ball 4', code: 'AETHER', claimed: false, revealed: false, ts: null },
         { pos: { lat: -6.888278359981987, lng: 107.61082908926849 }, title: 'Dragon Ball 5', code: 'TURBO', claimed: false, revealed: false, ts: null },
         { pos: { lat: -6.888294319040551, lng: 107.61004341921445 }, title: 'Dragon Ball 6', code: 'SPARK', claimed: false, revealed: false, ts: null },
         { pos: { lat: -6.889397475056475, lng: 107.61072630941614 }, title: 'Dragon Ball 7 (FINAL)', code: 'ZENOS', claimed: false, revealed: false, ts: null }
@@ -424,6 +429,143 @@
     let foundMarkers = {};
     let isClaiming = false;
     let pulseNearestIdx = null;
+
+    // Broadcast state: next available broadcast ball number (2..7) or null
+    let nextBroadcastIndex = null;
+
+    // Broadcast message contents (strings) keyed by ball number '2'..'7'
+    const broadcastMessages = {
+'2': `--------------- Broadcast dragon ball 2 -------------------
+
+Dari ufuk barat, berdirilah sebuah gedung megah, menatap langit dengan wibawa yang tak tergoyahkan sekaligus membingungkan 🌑.
+Lorong-lorong berliku dan tangga yang memusingkan seperti labirin 🌀
+menyimpan teka-teki di setiap sudutnya tantangan bagi setiap penjelajah yang berani menapaki jalannya.
+
+Jejak Paragon Corp terselip di dinding-dindingnya ✨
+sementara cahaya redup menari di lantai beton, memandu langkah yang teliti 🕯️.
+🌑 Hati-hati… di ketinggian lantainya,
+distorsi waktu berkelindan dengan anomali ruang,
+menciptakan lorong misteri yang hanya bisa ditembus oleh jiwa yang teguh.
+
+🐉 Hanya dengan keberanianmu menafsirkan simbol dan langkah tegap menuju cahaya itulah,
+bola naga kedua akan menyingkap dirinya di hadapanmu.`,
+
+'3': `--------------- Broadcast dragon ball 3 -------------------
+
+Di antara tembok gagah sang penjaga mesin dan rancangan,
+terhampar sebuah teras terbuka bukan ruang tertutup,
+melainkan, halaman ide dan percakapan yang tak pernah padam.
+
+🌞 Di atasnya, panel surya menatap langit,
+menyerap cahaya matahari dan memantulkannya menjadi energi,
+seolah menghidupkan semangat para pencari ilmu yang bernaung di bawahnya.
+
+🪑 Bangku-bangku merah sederhana berjajar,
+menjadi saksi bisu perdebatan, tawa, dan rencana masa depan.
+Sementara itu, di sela-selanya tumbuh tanaman hias dan pohon kecil,
+memberikan sejuk di tengah riuh inovasi.
+
+⚙️ Namun, jangan remehkan lantai di bawahnya,
+sebuah lapisan tersembunyi yang dapat bergerak, dikendalikan, dan berubah,
+ibarat rahasia mesin raksasa yang menanti disentuh oleh tangan-tangan berani.
+
+🐉 Di sinilah gagasan bertemu kenyataan,
+di sinilah energi berpadu dengan kreasi,
+dan hanya mereka yang peka membaca harmoni ruang terbuka ini
+akan mampu merasakan getaran Dragon Ball keempat.`,
+
+'4': `--------------- Broadcast dragon ball 4 -------------------
+
+Di balik bayang Gedung Sipil dan Basic Science Center A,
+terbentang sebuah bangunan terbuka kuno yang jarang disinggahi 👁️.
+Lorong tanpa ujung yang tersirat di udara, halaman sunyi yang menahan bisikan masa lalu
+di sinilah gema orasi dan rahasia sesepuh masih bergetar, meski tak seorang pun memperhatikannya.
+
+🌫️ Cahaya redup menari di lantai berderit dan tiang kayu tua,
+menuntun langkah yang berani menafsirkan jejak tak kasat mata.
+Setiap sudut seolah menyimpan rahasia, setiap hembusan angin membisikkan teka-teki.
+
+🐉 Hanya yang peka dan tekun menyingkap simbol-simbolnya
+akan menemukan bola naga kedua yang tersembunyi di hadapannya. `,
+
+'5': `--------------- Broadcast dragon ball 5 -------------------
+
+Di pusat samudra ilmu kampus ini berdiri sebuah bangunan megah,
+bertingkat-tingkat, berfasad modern, berjendela banyak
+yang memantulkan cahaya mentari ke segala arah,
+seolah menyeruput pengetahuan dari jagat raya.
+
+Di dalamnya terbentang ruang baca luas,
+sunyi namun sarat bisikan gagasan,
+dikelilingi rak buku menjulang bagai hutan pengetahuan
+dan mesin-mesin digital yang membuka gerbang data tak terbatas.
+
+💻 Di sudut tertentu, komputer katalog menunggu disentuh,
+sementara meja layanan berdiri tegak,
+menjadi penjaga peralihan antara dunia nyata dan dunia literasi.
+
+🤫 Ada sebuah ruang unik di mana manusia berkumpul
+namun tak boleh berucap—ruang diskusi tanpa suara,
+tempat ide berperang hanya lewat tatapan dan coretan pena.
+
+Namun, jangan terkecoh.
+Di lantai terbawah, sebuah kantin sederhana menjadi saksi—
+sebelum tawa mahasiswa berubah menjadi hening,
+sebelum derap langkah menuju "pembantaian" akademik dimulai. 🍽️
+
+🐉 Maka di sinilah Dragon Ball kelima bersemayam,
+di tengah ribuan buku, layar digital, dan kesunyian yang khidmat,
+menanti mereka yang berani menatap pengetahuan
+bukan hanya sebagai sumber jawaban,
+tetapi juga sebagai ujian jiwa.`,
+
+'6': `--------------- Broadcast dragon ball 6 -------------------
+
+Ada sebuah gedung bertingkat yang menjulang dengan fasad formal,
+sering menjadi panggung kata-kata berat,
+tempat seminar, sidang tesis, dan disertasi
+yang menentukan nasib para penimba ilmu. 🎓📜
+
+Namun, jangan salah.
+Di balik wibawanya, bersemayam rumor kelam.
+kisah lama tentang jiwa yang tak lagi kembali,
+meninggalkan bayang-bayang muram
+yang hingga kini masih bergaung di lorong-lorongnya. 🕯️👤👻
+
+Tempat ini juga menjadi arena kuliah tamu yang ramai,
+penuh tamu agung dan orasi intelektual.
+Tetapi bagi sebagian,
+tempat ini tak lebih dari ruang sunyi dengan kisah rahasia,
+bahkan disebut-sebut sebagai toilet pribadi Seniro Bobi,
+ironis, namun nyata. 🚻😅
+
+🐉 Maka, di balik keanggunan dan misteri kelamnya,
+Dragon Ball keenam bersemayam,
+menunggu mereka yang berani melangkah masuk,
+menyibak aura akademik yang bercampur dengan bisikan masa lalu.`,
+
+'7': `--------------- Broadcast dragon ball 7 -------------------
+
+Enam bola naga sudah kalian genggam,
+namun pencarian belumlah tuntas.
+Ada satu tempat terakhir yang harus kalian datangi,
+mahkota kebanggaan para pengendali daya. 🌩️
+
+Ia berdiri gagah, menyimpan nama yang melekat erat
+dengan arus, tegangan, dan kekuatan bangsa.
+Di sanalah para penerus cahaya ditempa,
+menjadi penjaga nyala negeri. 🔋✨
+
+Bangunan ini tak sekadar dinding dan ruang,
+ia adalah simbol kehormatan sebuah jurusan,
+tempat para ksatria listrik bernaung
+dan menatap masa depan dengan penuh kebanggaan. ⚡🏛️
+
+Carilah ia.
+Karena di sanalah Dragon Ball ketujuh menunggu
+dan hanya mereka yang mengerti arti “daya”
+yang bisa menyentuhnya. 🐉🌟`
+    };
 
     // ---------------------- UTILS ----------------------
     function getDistanceBetween(lat1, lon1, lat2, lon2){
@@ -448,6 +590,10 @@
       try{
         localStorage.setItem('dragonRadarState', JSON.stringify(CONFIG.dragonBalls));
       }catch(e){ console.warn('saveState error', e) }
+
+      try{
+        localStorage.setItem('dragonRadarBroadcast', JSON.stringify({ nextBroadcastIndex }));
+      }catch(e){}
     }
 
     function loadState(){
@@ -457,12 +603,19 @@
           const savedBalls = JSON.parse(saved);
           CONFIG = JSON.parse(JSON.stringify(initialConfig));
           CONFIG.dragonBalls = initialConfig.dragonBalls.map((db, idx) => ({ ...db, ...(savedBalls[idx]||{}) }));
-          return;
         }catch(e){
           console.warn('loadState parse error', e);
+          CONFIG = JSON.parse(JSON.stringify(initialConfig));
         }
+      } else {
+        CONFIG = JSON.parse(JSON.stringify(initialConfig));
       }
-      CONFIG = JSON.parse(JSON.stringify(initialConfig));
+
+      // load broadcast state
+      try{
+        const b = JSON.parse(localStorage.getItem('dragonRadarBroadcast') || 'null');
+        nextBroadcastIndex = b && b.nextBroadcastIndex ? b.nextBroadcastIndex : null;
+      }catch(e){ nextBroadcastIndex = null; }
     }
 
     // ---------------------- INIT APP ----------------------
@@ -474,6 +627,7 @@
       setupEventListeners();
       updateFinalBossUI();
       restorePanelCollapseState();
+      updateMessageButton();
     }
 
     // ---------------------- MAP & MARKERS ----------------------
@@ -530,7 +684,7 @@
       });
     }
 
-    // ---------------------- UI (list, gps) ----------------------
+    // ---------------------- UI (list, gps/message) ----------------------
     function initUI(){
       const list = document.getElementById('db-list');
       list.innerHTML = '';
@@ -595,12 +749,15 @@
           userMarker.setLatLng(userLatLng);
         }
 
+        // update GPS card IF exists (we removed it from DOM intentionally)
         const gpsCard = document.getElementById('gps-card');
-        gpsCard.textContent = `GPS ±${Math.round(accuracy)} m — Lat:${latitude.toFixed(6)}, Lng:${longitude.toFixed(6)}`;
-        if(accuracy > 50) gpsCard.style.borderColor = 'var(--red)';
-        else if (accuracy > 20) gpsCard.style.borderColor = 'var(--accent)';
-        else gpsCard.style.borderColor = 'var(--green)';
-        gpsCard.style.display = 'block';
+        if(gpsCard){
+          gpsCard.textContent = `GPS ±${Math.round(accuracy)} m — Lat:${latitude.toFixed(6)}, Lng:${longitude.toFixed(6)}`;
+          if(accuracy > 50) gpsCard.style.borderColor = 'var(--red)';
+          else if (accuracy > 20) gpsCard.style.borderColor = 'var(--accent)';
+          else gpsCard.style.borderColor = 'var(--green)';
+          gpsCard.style.display = 'block';
+        }
 
         checkGeofence();
         updateUI();
@@ -625,7 +782,9 @@
       document.getElementById('start-stop-btn').textContent = '🚀 Mulai';
       document.getElementById('start-stop-btn').classList.remove('stop');
       document.getElementById('start-stop-btn').setAttribute('aria-pressed','false');
-      document.getElementById('gps-card').style.display = 'none';
+
+      const gpsCard = document.getElementById('gps-card');
+      if(gpsCard) gpsCard.style.display = 'none';
     }
 
     // ---------------------- GEOFENCE & REVEAL ----------------------
@@ -709,7 +868,7 @@
             const code = prompt(`Masukkan kode validasi untuk ${ball.title} (4–6 huruf):`);
             if(code === null) return;
             if(code.trim().toUpperCase() !== ball.code){
-              showToast('❌ Kode salah!', 'error', 5000);
+              showToast('❌ Kode salah, ingat kami mengawasi!', 'error', 5000);
               return;
             }
             finalizeClaim(idx);
@@ -731,6 +890,7 @@
       modal.setAttribute('aria-hidden','true');
     }
 
+    // ---------------------- FINALISASI KLAIM (tambahan broadcast) ----------------------
     function finalizeClaim(index){
       if(isClaiming) return;
       const ball = CONFIG.dragonBalls[index];
@@ -752,8 +912,16 @@
       showToast('✅ Bola berhasil diklaim! Selamat!', 'success', 5000);
       isClaiming = false;
 
+      // Aktifkan broadcast untuk bola selanjutnya jika index 0..5 (DB1..DB6)
+      if(index >= 0 && index <= 5){
+        nextBroadcastIndex = index + 2; // index0 -> 2, index1 -> 3, ..., index5 -> 7
+        saveState();
+        showToast(`📩 Broadcast untuk Dragon Ball ${nextBroadcastIndex} tersedia. Klik PESAN.`, 'warn', 4000);
+        updateMessageButton();
+      }
+
       if(allFirstSixClaimed() && !CONFIG.dragonBalls[6].claimed){
-        showToast('⚔️ 6 bola terkumpul! Final Boss terbuka.', 'success', 5000);
+        showToast('⚔️ 6 bola terkumpul! Final Boss terbuka.', 'success', 10000);
         updateFinalBossUI();
       }
     }
@@ -861,6 +1029,7 @@
     function restartGame(){
       stopVictoryAudio();
       localStorage.removeItem('dragonRadarState');
+      localStorage.removeItem('dragonRadarBroadcast');
       location.reload();
     }
 
@@ -869,6 +1038,7 @@
       if(!confirm('Apakah Anda yakin ingin mereset semua progres petualangan?')) return;
       stopLocationTracking();
       localStorage.removeItem('dragonRadarState');
+      localStorage.removeItem('dragonRadarBroadcast');
       showToast('Loss, sayonara!', 'warn', 3000);
       setTimeout(()=> location.reload(), 1200);
     }
@@ -898,6 +1068,44 @@
       btn.setAttribute('title', collapsed ? 'Tampilkan panel' : 'Sembunyikan panel');
     }
 
+    // ---------------------- MESSAGE BUTTON HELPERS ----------------------
+    function updateMessageButton(){
+      const btn = document.getElementById('message-btn');
+      if(!nextBroadcastIndex){
+        btn.textContent = '📩 PESAN';
+        btn.title = 'Tidak ada pesan baru';
+      } else {
+        btn.textContent = `📩 PESAN — Broadcast DB ${nextBroadcastIndex}`;
+        btn.title = `Buka broadcast Dragon Ball ${nextBroadcastIndex}`;
+      }
+    }
+
+    function openMessageModal(idx){
+      const modal = document.getElementById('message-modal');
+      const content = document.getElementById('message-content');
+      const key = String(idx);
+      const msg = broadcastMessages[key] || 'Pesan tidak ditemukan.';
+      content.textContent = msg;
+      modal.style.display = 'flex';
+      // NOTE: tidak mengosongkan nextBroadcastIndex di sini agar konfirmasi tutup bisa muncul
+      // nextBroadcastIndex akan di-clear ketika pengguna menutup modal dan mengonfirmasi
+    }
+
+    function closeMessageModal(force=false){
+      const modal = document.getElementById('message-modal');
+      if(!modal || modal.style.display !== 'flex') return;
+      // Jika tidak dipaksa, minta konfirmasi spesial:
+      if(!force){
+        const ok = confirm('Yakin kau juniro?! Pesan ini hanya 1x saja');
+        if(!ok) return; // batal jika user menekan Batal
+      }
+      // jika dikonfirmasi (atau dipaksa), hapus broadcast dan tutup
+      nextBroadcastIndex = null;
+      saveState();
+      updateMessageButton();
+      modal.style.display = 'none';
+    }
+
     // ---------------------- SETUP EVENTS ---------------------
     function setupEventListeners(){
       document.getElementById('start-stop-btn').addEventListener('click', ()=>{
@@ -909,9 +1117,20 @@
         else showToast("Lokasi belum ditemukan. Klik 'Mulai' untuk memulai pelacakan.", 'warn', 2000);
       });
 
+      // Tombol PESAN
+      document.getElementById('message-btn').addEventListener('click', ()=>{
+        if(!nextBroadcastIndex){
+          showToast('Tidak ada pesan baru.', 'info', 2000);
+          return;
+        }
+        openMessageModal(nextBroadcastIndex);
+      });
+
       document.getElementById('claim-open-btn').addEventListener('click', openClaimModal);
       document.getElementById('claim-close').addEventListener('click', closeClaimModal);
       document.getElementById('reset-btn').addEventListener('click', resetAdventure);
+
+      document.getElementById('message-close').addEventListener('click', ()=> closeMessageModal(false));
 
       document.getElementById('victory-restart-btn').addEventListener('click', restartGame);
       document.getElementById('victory-close-btn').addEventListener('click', hideVictoryScreen);
@@ -923,6 +1142,8 @@
         if(e.key==='Escape'){
           const modal = document.getElementById('claim-modal');
           if(modal.style.display === 'flex') { closeClaimModal(); return; }
+          const mm = document.getElementById('message-modal');
+          if(mm.style.display === 'flex') { closeMessageModal(false); return; }
           toggleProgressPanel();
         }
       });
